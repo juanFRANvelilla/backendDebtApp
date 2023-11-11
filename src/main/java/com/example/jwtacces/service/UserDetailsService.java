@@ -3,6 +3,7 @@ package com.example.jwtacces.service;
 import com.example.jwtacces.models.ERole;
 import com.example.jwtacces.models.RoleEntity;
 import com.example.jwtacces.models.UserEntity;
+import com.example.jwtacces.registration.RegistrationRequest;
 import com.example.jwtacces.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,8 +21,8 @@ public class UserDetailsService implements org.springframework.security.core.use
     @Autowired
     private UserRepository userRepository;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByUsername(username)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserEntity userEntity = userRepository.findByEmail(email)
                 .orElseThrow(()->new UsernameNotFoundException("User not found."));
 
         List< GrantedAuthority> authorities = new ArrayList<>();
@@ -30,5 +31,9 @@ public class UserDetailsService implements org.springframework.security.core.use
         }
 
         return new User(userEntity.getUsername(), userEntity.getPassword(),true,true,true,true,authorities);
+    }
+
+    public User registerUser(RegistrationRequest request){
+        return null;
     }
 }

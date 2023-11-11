@@ -40,9 +40,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         UserEntity userEntity = null;
         String username = "";
+        String email = "";
         String password = "";
         try{
             userEntity = new ObjectMapper().readValue(request.getInputStream(), UserEntity.class);
+            email = userEntity.getEmail();
+            userEntity = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             username = userEntity.getUsername();
             password = userEntity.getPassword();
         } catch (StreamReadException e) {

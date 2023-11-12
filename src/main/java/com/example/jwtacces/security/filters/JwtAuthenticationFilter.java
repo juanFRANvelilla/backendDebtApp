@@ -40,13 +40,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         UserEntity userEntity = null;
         String username = "";
-        String email = "";
+        String phone = "";
         String password = "";
         try{
             userEntity = new ObjectMapper().readValue(request.getInputStream(), UserEntity.class);
-            email = userEntity.getEmail();
+            phone = userEntity.getPhone();
             password = userEntity.getPassword();
-            userEntity = userRepository.findByEmail(email)
+            userEntity = userRepository.findByPhone(phone)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             username = userEntity.getUsername();
         } catch (StreamReadException e) {
@@ -80,6 +80,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         httpResponse.put("Message", "Autenticacion Correcta");
         httpResponse.put("Username", user.getUsername());
         httpResponse.put("Email", userEntity.getEmail());
+        httpResponse.put("Phone", userEntity.getPhone());
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(httpResponse));
         response.setStatus(HttpStatus.OK.value());

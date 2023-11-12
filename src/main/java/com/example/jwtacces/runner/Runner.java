@@ -24,6 +24,7 @@ public class Runner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         UserEntity user = UserEntity.builder()
                 .email("juanfran@gmail.com")
+                .phone("637650089")
                 .username("juanfran")
                 .password(passwordEncoder.encode("juanfran"))
                 .roles(Set.of(RoleEntity.builder()

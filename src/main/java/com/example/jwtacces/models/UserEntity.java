@@ -29,9 +29,11 @@ public class UserEntity {
     private String username;
     @NotBlank
     private String password;
-    @NotBlank
-    @NaturalId(mutable = true)
     private String email;
+    @NotBlank
+    @NaturalId(mutable = false)
+    private String phone;
+
 
 
     @ManyToMany(fetch = FetchType.EAGER,

@@ -1,6 +1,7 @@
 package com.example.jwtacces.models;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -10,11 +11,7 @@ import lombok.*;
 @Builder
 public class PhoneValidationRequest {
     @NotBlank
-    private int id;
-    @NotBlank
     private String phone;
-    @NotBlank
+    @NotNull
     private long verificationCode;
-    @NotBlank
-    private String requestData;
 }

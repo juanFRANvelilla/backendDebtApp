@@ -3,6 +3,7 @@ package com.example.jwtacces.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -21,10 +22,9 @@ public class PhoneValidation {
     private int id;
     @NotBlank
     private String phone;
-    @NotBlank
+    @NotNull
     private long verificationCode;
     @NotBlank
     private String requestData;
-    @NotBlank
     private boolean valid;
 }

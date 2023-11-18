@@ -4,6 +4,7 @@ import com.example.jwtacces.DTO.CreateUserDTO;
 import com.example.jwtacces.models.*;
 import com.example.jwtacces.repository.PhoneValidationRepository;
 import com.example.jwtacces.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -13,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -40,19 +43,24 @@ public class PrincipalController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El número de teléfono no existe o no está confirmado.");
     }
 
+    @Transactional
     @PostMapping(path = "/validatePhone")
     public ResponseEntity<?>validatePhone(@Valid @RequestBody PhoneValidationRequest phoneValidationRequest){
         PhoneValidation phoneValidation = phoneValidationRepository.findPhoneValidationByPhone(phoneValidationRequest.getPhone())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Not found number reference"));
-        if (phoneValidation.getVerificationCode() == phoneValidationRequest.getVerificationCode() {
-            if(Integer.parseInt(phoneValidationRequest.getRequestData())< Integer.parseInt(phoneValidation.getRequestData() + 10)){
-                return ResponseEntity.ok("Success to register the new phone");
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error de servidor, vuelve a intentar el registro"));
+        if (phoneValidation.getVerificationCode() == phoneValidationRequest.getVerificationCode()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            LocalDateTime requestData = LocalDateTime.parse(phoneValidation.getRequestData(), formatter);
+            LocalDateTime currentTime = LocalDateTime.now();
+            if (requestData.plusMinutes(10).isAfter(currentTime)) {
+                phoneValidationRepository.setPhoneValidationTrue(phoneValidationRequest.getPhone());
+                return ResponseEntity.ok("Codigo valido, tu numero se ha registrado correctamente");
             }
             else{
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fecha");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A caducado tu tiempo para introducir el codigo");
             }
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El código no coincide");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Codigo no valido");
 
     }
 

@@ -17,7 +17,7 @@ public class CreateUserDTO {
     private String username;
     @NotBlank
     private String password;
-    @NotBlank
     private String email;
-    private Set<String> roles;
+    @NotBlank
+    private String phone;
 }

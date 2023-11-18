@@ -12,11 +12,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.relation.Role;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/start")
+@RequestMapping(path = "/api")
 public class PrincipalController {
 
     @Autowired
@@ -25,36 +27,25 @@ public class PrincipalController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping(path = "/hello")
-    public String saludar(){
-        return "hola";
-    }
 
-    @GetMapping(path = "/hello2")
-    public String saludarSecreto(){
-        return "hola secreto";
-    }
-
-
-    @PostMapping(path = "createUser")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(path = "/createUser")
     public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserDTO createUserDTO){
-        Set<RoleEntity> roles = createUserDTO.getRoles()
-                .stream()
-                .map(role -> RoleEntity.builder()
-                                        .name(ERole.valueOf(role))
-                                        .build())
-                                            .collect(Collectors.toSet());
+        Set<RoleEntity> roles = new HashSet<RoleEntity>();
+        RoleEntity userRole = RoleEntity.builder()
+                                        .name(ERole.valueOf("USER"))
+                                        .build();
+        roles.add(userRole);
 
-        UserEntity user = UserEntity.builder()
+        UserEntity newUser = UserEntity.builder()
                 .username(createUserDTO.getUsername())
                 .password(passwordEncoder.encode(createUserDTO.getPassword()))
                 .email(createUserDTO.getEmail())
+                .phone(createUserDTO.getPhone())
                 .roles(roles)
                 .build();
 
-        userRepository.save(user);
-        return ResponseEntity.ok(user);
+        userRepository.save(newUser);
+        return ResponseEntity.ok(newUser);
     }
 
     @DeleteMapping(path = "/deleteUser")

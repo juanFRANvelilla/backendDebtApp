@@ -44,7 +44,7 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(config -> config.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/start/hello").permitAll();
+                    auth.requestMatchers("/api/createUser").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {
@@ -54,17 +54,6 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-    /*
-    @Bean
-    UserDetailsService userDetailsService(){
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("juan")
-                .password("12345")
-                .roles()
-                .build());
-        return manager;
-    }*/
 
     @Bean
     PasswordEncoder passwordEncoder(){

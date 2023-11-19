@@ -7,7 +7,6 @@ import com.example.jwtacces.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,16 +44,17 @@ public class PrincipalController {
 
     @Transactional
     @PostMapping(path = "/validatePhone")
-    public ResponseEntity<?>validatePhone(@Valid @RequestBody PhoneValidationRequest phoneValidationRequest){
-        PhoneValidation phoneValidation = phoneValidationRepository.findPhoneValidationByPhone(phoneValidationRequest.getPhone())
+    public ResponseEntity<?>validatePhone(@Valid @RequestBody CreateUserDTO createUserDTO){
+        PhoneValidation phoneValidation = phoneValidationRepository.findPhoneValidationByPhone(createUserDTO.getPhone())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error de servidor, vuelve a intentar el registro"));
-        if (phoneValidation.getVerificationCode() == phoneValidationRequest.getVerificationCode()) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        if (phoneValidation.getVerificationCode() == createUserDTO.getVerificationCode()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             LocalDateTime requestData = LocalDateTime.parse(phoneValidation.getRequestData(), formatter);
             LocalDateTime currentTime = LocalDateTime.now();
             if (requestData.plusMinutes(10).isAfter(currentTime)) {
-                phoneValidationRepository.setPhoneValidationTrue(phoneValidationRequest.getPhone());
-                return ResponseEntity.ok("Codigo valido, tu numero se ha registrado correctamente");
+                phoneValidationRepository.setPhoneValidationTrue(createUserDTO.getPhone());
+                createUser(createUserDTO);
+                return ResponseEntity.ok("Bienvenido, registro completado con exito");
             }
             else{
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A caducado tu tiempo para introducir el codigo");
@@ -65,8 +65,7 @@ public class PrincipalController {
     }
 
 
-    @PostMapping(path = "/createUser")
-    public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserDTO createUserDTO){
+    private ResponseEntity<?> createUser(CreateUserDTO createUserDTO){
         Set<RoleEntity> roles = new HashSet<RoleEntity>();
         RoleEntity userRole = RoleEntity.builder()
                                         .name(ERole.valueOf("USER"))

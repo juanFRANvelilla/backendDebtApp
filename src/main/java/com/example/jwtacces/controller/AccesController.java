@@ -2,7 +2,8 @@ package com.example.jwtacces.controller;
 
 import com.example.jwtacces.DTO.CreateUserDTO;
 import com.example.jwtacces.models.*;
-import com.example.jwtacces.repository.PhoneValidationRepository;
+import com.example.jwtacces.models.registration.PhoneValidation;
+import com.example.jwtacces.repository.registration.PhoneValidationRepository;
 import com.example.jwtacces.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(path = "/api")
-public class PrincipalController {
+public class AccesController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -31,11 +32,6 @@ public class PrincipalController {
 
     @Autowired
     private PhoneValidationRepository phoneValidationRepository;
-
-    @GetMapping(path = "saludo")
-    public String saludar(){
-        return "hola";
-    }
 
     @PostMapping(path = "/confirmPhone")
     public ResponseEntity<?> confirmPhone(@Valid @RequestBody PhoneValidation phoneValidation) {

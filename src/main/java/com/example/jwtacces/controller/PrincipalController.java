@@ -32,15 +32,23 @@ public class PrincipalController {
     @Autowired
     private PhoneValidationRepository phoneValidationRepository;
 
-    @PostMapping(path = "/confirmPhone")
-    public ResponseEntity<?>confirmPhone(@Valid @RequestBody PhoneValidation phoneValidation){
-        Optional<PhoneValidation> phoneValidationOptional = phoneValidationRepository.findPhoneValidationByPhone(phoneValidation.getPhone());
-        if (phoneValidationOptional.isPresent() && phoneValidationOptional.get().isValid()){
-            return ResponseEntity.ok("El número de teléfono esta registrado ya");
-        }
-        phoneValidationRepository.save(phoneValidation);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El número de teléfono no existe o no está confirmado.");
+    @GetMapping(path = "saludo")
+    public String saludar(){
+        return "hola";
     }
+
+    @PostMapping(path = "/confirmPhone")
+    public ResponseEntity<?> confirmPhone(@Valid @RequestBody PhoneValidation phoneValidation) {
+        Optional<PhoneValidation> phoneValidationOptional = phoneValidationRepository.findPhoneValidationByPhone(phoneValidation.getPhone());
+
+        if (phoneValidationOptional.isPresent() && phoneValidationOptional.get().isValid()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("El número de teléfono ya está registrado y confirmado");
+        }
+
+        phoneValidationRepository.save(phoneValidation);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Añadido registro de validacion en la base de datos");
+    }
+
 
     @Transactional
     @PostMapping(path = "/validatePhone")
@@ -65,7 +73,7 @@ public class PrincipalController {
     }
 
 
-    private ResponseEntity<?> createUser(CreateUserDTO createUserDTO){
+    private UserEntity createUser(CreateUserDTO createUserDTO){
         Set<RoleEntity> roles = new HashSet<RoleEntity>();
         RoleEntity userRole = RoleEntity.builder()
                                         .name(ERole.valueOf("USER"))
@@ -81,7 +89,7 @@ public class PrincipalController {
                 .build();
 
         userRepository.save(newUser);
-        return ResponseEntity.ok(newUser);
+        return newUser;
     }
 
     @DeleteMapping(path = "/deleteUser")

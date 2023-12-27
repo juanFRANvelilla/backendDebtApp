@@ -141,6 +141,9 @@ public class ContactsController {
         if(contact == null || user.getId() == contact.getId()){
             return ResponseEntity.badRequest().body("Body del request invalido");
         }
+        if (contactRepository.isAlreadyContact(Long.valueOf(user.getId()), Long.valueOf(contact.getId()))) {
+            return ResponseEntity.badRequest().body("Ya son contactos");
+        }
         if(contactRequestRepository.validateRequest(Long.valueOf(user.getId()), Long.valueOf(contact.getId())) > 0
             || contactRequestRepository.validateRequest(Long.valueOf(contact.getId()), Long.valueOf(user.getId())) > 0){
             Contact addContact = Contact.builder()

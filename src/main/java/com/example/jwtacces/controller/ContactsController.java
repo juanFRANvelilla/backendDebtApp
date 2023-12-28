@@ -50,10 +50,10 @@ public class ContactsController {
             contact = userRepository.findByUsername(usernameContact)
                     .orElseThrow(()-> new UsernameNotFoundException("User not found"));
         }
-        else if(phoneContact != ""){
-            contact = userRepository.findByPhone(phoneContact)
-                    .orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        }
+//        else if(phoneContact != ""){
+//            contact = userRepository.findByPhone(phoneContact)
+//                    .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+//        }
         return contact;
 
     }
@@ -62,7 +62,7 @@ public class ContactsController {
     public String welcome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
-        String welcome = "Hola, " + user.getUsername() + " tu telefono es: " + user.getPhone();
+        String welcome = "Hola, " + user.getName() + " tu telefono es: " + user.getUsername();
         return welcome;
     }
 

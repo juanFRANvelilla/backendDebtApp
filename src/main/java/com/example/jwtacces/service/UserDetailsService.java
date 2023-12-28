@@ -1,6 +1,5 @@
 package com.example.jwtacces.service;
 
-import com.example.jwtacces.models.ERole;
 import com.example.jwtacces.models.RoleEntity;
 import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.registration.RegistrationRequest;

@@ -31,10 +31,9 @@ public class UserEntity {
     private String password;
     private String email;
     @NotBlank
-    @NaturalId(mutable = false)
-    private String phone;
-
-
+    private String name;
+    @NotBlank
+    private String lastName;
 
     @ManyToMany(fetch = FetchType.EAGER,
             targetEntity = RoleEntity.class,

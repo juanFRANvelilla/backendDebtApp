@@ -21,7 +21,7 @@ public class PhoneValidation {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "idValidations")
     private int id;
     @NotBlank
-    private String phone;
+    private String username;
     @NotNull
     private long verificationCode;
     @NotBlank

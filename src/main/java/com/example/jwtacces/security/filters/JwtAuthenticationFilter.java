@@ -19,7 +19,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,15 +39,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         UserEntity userEntity = null;
         String username = "";
-        String phone = "";
         String password = "";
         try{
             userEntity = new ObjectMapper().readValue(request.getInputStream(), UserEntity.class);
-            phone = userEntity.getPhone();
-            password = userEntity.getPassword();
-            userEntity = userRepository.findByPhone(phone)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             username = userEntity.getUsername();
+            password = userEntity.getPassword();
         } catch (StreamReadException e) {
             throw new RuntimeException(e);
         } catch (DatabindException e) {

@@ -33,9 +33,12 @@ public class AccesController {
     @Autowired
     private PhoneValidationRepository phoneValidationRepository;
 
+    /*verifica que el telefono con el que se quiere registrar un nuevo usuario no este ya siendo
+    utilizado en la app
+     */
     @PostMapping(path = "/confirmPhone")
     public ResponseEntity<?> confirmPhone(@Valid @RequestBody PhoneValidation phoneValidation) {
-        Optional<PhoneValidation> phoneValidationOptional = phoneValidationRepository.findPhoneValidationByPhone(phoneValidation.getPhone());
+        Optional<PhoneValidation> phoneValidationOptional = phoneValidationRepository.findPhoneValidationByPhone(phoneValidation.getUsername());
 
         if (phoneValidationOptional.isPresent() && phoneValidationOptional.get().isValid()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("El número de teléfono ya está registrado y confirmado");
@@ -49,14 +52,14 @@ public class AccesController {
     @Transactional
     @PostMapping(path = "/validatePhone")
     public ResponseEntity<?>validatePhone(@Valid @RequestBody CreateUserDTO createUserDTO){
-        PhoneValidation phoneValidation = phoneValidationRepository.findPhoneValidationByPhone(createUserDTO.getPhone())
+        PhoneValidation phoneValidation = phoneValidationRepository.findPhoneValidationByPhone(createUserDTO.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error de servidor, vuelve a intentar el registro"));
         if (phoneValidation.getVerificationCode() == createUserDTO.getVerificationCode()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             LocalDateTime requestData = LocalDateTime.parse(phoneValidation.getRequestData(), formatter);
             LocalDateTime currentTime = LocalDateTime.now();
             if (requestData.plusMinutes(10).isAfter(currentTime)) {
-                phoneValidationRepository.setPhoneValidationTrue(createUserDTO.getPhone());
+                phoneValidationRepository.setPhoneValidationTrue(createUserDTO.getUsername());
                 createUser(createUserDTO);
                 return ResponseEntity.ok("Bienvenido, registro completado con exito");
             }
@@ -80,7 +83,8 @@ public class AccesController {
                 .username(createUserDTO.getUsername())
                 .password(passwordEncoder.encode(createUserDTO.getPassword()))
                 .email(createUserDTO.getEmail())
-                .phone(createUserDTO.getPhone())
+                .name(createUserDTO.getName())
+                .lastName(createUserDTO.getLastName())
                 .roles(roles)
                 .build();
 

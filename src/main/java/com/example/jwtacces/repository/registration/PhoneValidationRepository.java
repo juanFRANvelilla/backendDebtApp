@@ -12,11 +12,24 @@ import java.util.Optional;
 @Repository
 public interface PhoneValidationRepository extends JpaRepository<PhoneValidation, Integer> {
     @Query("SELECT p FROM PhoneValidation p " +
-            "WHERE p.phone LIKE :phone " +
-            "AND p.requestData = (SELECT MAX(p2.requestData) FROM PhoneValidation p2 WHERE p2.phone LIKE :phone)")
-    Optional<PhoneValidation> findPhoneValidationByPhone(@Param("phone") String phone);
+            "WHERE p.username LIKE :username " +
+            "AND p.requestData = (SELECT MAX(p2.requestData) FROM PhoneValidation p2 WHERE p2.username LIKE :username)")
+    Optional<PhoneValidation> findPhoneValidationByPhone(@Param("username") String username);
 
     @Modifying
-    @Query("UPDATE PhoneValidation p SET p.valid = true WHERE p.phone LIKE :phone")
-    int setPhoneValidationTrue(@Param("phone") String phone);
+    @Query("UPDATE PhoneValidation p " +
+            "SET p.valid = true " +
+            "WHERE p.username LIKE :username AND p.requestData = " +
+            "(SELECT MAX(p2.requestData) FROM PhoneValidation p2 WHERE p2.username LIKE :username)")
+    int setPhoneValidationTrue(@Param("username") String username);
+
+
+    @Modifying
+    @Query("UPDATE PhoneValidation p " +
+            "SET p.attempts = p.attempts + 1 " +
+            "WHERE p.username LIKE :username AND p.requestData = " +
+            "(SELECT MAX(p2.requestData) FROM PhoneValidation p2 WHERE p2.username LIKE :username)")
+    int increaseAttempts(@Param("username") String username);
+
+
 }

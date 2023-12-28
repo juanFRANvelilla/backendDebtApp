@@ -24,7 +24,7 @@ public class PhoneValidation {
     private String username;
     @NotNull
     private long verificationCode;
-    @NotBlank
     private String requestData;
+    private int attempts;
     private boolean valid;
 }

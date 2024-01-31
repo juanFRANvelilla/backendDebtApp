@@ -25,7 +25,7 @@ public class Runner implements CommandLineRunner {
         UserEntity user = UserEntity.builder()
                 .email("juanfran@gmail.com")
                 .username("+34637650089")
-                .name("juanfran")
+                .firstName("juanfran")
                 .lastName("velilla")
                 .password(passwordEncoder.encode("juanfran"))
                 .roles(Set.of(RoleEntity.builder()

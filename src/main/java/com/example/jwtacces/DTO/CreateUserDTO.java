@@ -17,9 +17,9 @@ public class CreateUserDTO {
     private String password;
     private String email;
     @NotBlank
-    private String name;
+    private String firstName;
     @NotBlank
     private String lastName;
     @NotNull
-    private long verificationCode;
+    private String verificationCode;
 }

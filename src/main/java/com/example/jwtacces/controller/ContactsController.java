@@ -62,7 +62,7 @@ public class ContactsController {
     public String welcome() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
-        String welcome = "Hola, " + user.getName() + " tu telefono es: " + user.getUsername();
+        String welcome = "Hola, " + user.getFirstName() + " tu telefono es: " + user.getUsername();
         return welcome;
     }
 

@@ -23,7 +23,7 @@ public class PhoneValidation {
     @NotBlank
     private String username;
     @NotNull
-    private long verificationCode;
+    private String verificationCode;
     private String requestData;
     private int attempts;
     private boolean valid;

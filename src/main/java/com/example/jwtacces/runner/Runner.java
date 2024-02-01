@@ -22,15 +22,15 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        UserEntity user = UserEntity.builder()
-                .email("juanfran@gmail.com")
-                .username("+34637650089")
-                .firstName("juanfran")
-                .lastName("velilla")
-                .password(passwordEncoder.encode("juanfran"))
-                .roles(Set.of(RoleEntity.builder()
-                        .name(ERole.ADMIN).build()))
-                .build();
-        userRepository.save(user);
+//        UserEntity user = UserEntity.builder()
+//                .email("juanfran@gmail.com")
+//                .username("+34637650089")
+//                .firstName("juanfran")
+//                .lastName("velilla")
+//                .password(passwordEncoder.encode("juanfran"))
+//                .roles(Set.of(RoleEntity.builder()
+//                        .name(ERole.ADMIN).build()))
+//                .build();
+//        userRepository.save(user);
     }
 }

@@ -85,7 +85,6 @@ public class ContactsController {
     /* devuelve los contactos que tiene cada usuario, si no tiene devolvera null */
     @GetMapping(path = "/showContacts")
     public ResponseEntity<?> showContacts(){
-        Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
         Set<Integer>contactsId = new HashSet<Integer>();
@@ -103,9 +102,7 @@ public class ContactsController {
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.badRequest().body(null);
         }
-
-        httpResponse.put("contacts", contacts);
-        return ResponseEntity.ok().body(httpResponse);
+        return ResponseEntity.ok().body(contacts);
     }
 
 
@@ -150,11 +147,11 @@ public class ContactsController {
      */
     @GetMapping(path = "/showRequestContact")
     public ResponseEntity<?> showRequestContact(){
-        Map<String, Object> httpResponse = new HashMap<>();
+//        Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
         Set<Integer>contactRequestSendersId = new HashSet<Integer>();
-        Set<UserDTO>contacts;
+        Set<UserDTO>contacts = null;
         try {
             //busca el id de los usuarios que tienes pendiente de aceptar
             // (ya que en la tabla RequestContact solo aparece como info el id de los pendientes)
@@ -164,13 +161,13 @@ public class ContactsController {
             //busca info de los contactos haciendo uso de los anteriores id
             contacts = getUsersById(contactRequestSendersId);
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.badRequest().body(httpResponse);
+//            return ResponseEntity.badRequest().body(httpResponse);
         } catch (UsernameNotFoundException e) {
-            return ResponseEntity.badRequest().body(httpResponse);
+//            return ResponseEntity.badRequest().body(httpResponse);
         }
 
-        httpResponse.put("pendingContacs",contacts);
-        return ResponseEntity.ok().body(httpResponse);
+//        httpResponse.put("pendingContacs",contacts);
+        return ResponseEntity.ok().body(contacts);
     }
 
     @Transactional

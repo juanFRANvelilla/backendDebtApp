@@ -12,13 +12,16 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -67,7 +70,8 @@ public class ContactsController {
     }
 
     @GetMapping(path = "/showContact")
-    public Set<String> showContact(){
+    public ResponseEntity<?> showContact(){
+        Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
         Set<Integer>contactsId = new HashSet<Integer>();
@@ -75,7 +79,11 @@ public class ContactsController {
             contactsId = contactRepository.findContactIdsByUserId(Long.valueOf(user.getId()))
                     .orElseThrow(() -> new EmptyResultDataAccessException(1));
         } catch (EmptyResultDataAccessException e) {
-            throw new NoContactsException("El usuario no tiene contactos", e);
+            httpResponse.put("contacts", "no tiene contactos");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(httpResponse);
+//            throw new NoContactsException("El usuario no tiene contactos", e);
         }
         Set<String>contactsUsername = new HashSet<String>();
         for(Integer id : contactsId){
@@ -83,7 +91,8 @@ public class ContactsController {
                     .orElseThrow(()-> new UsernameNotFoundException("User not found"));
             contactsUsername.add(contact.getUsername());
         }
-        return contactsUsername;
+        httpResponse.put("contacts", contactsUsername);
+        return ResponseEntity.status(HttpStatus.OK).body(httpResponse);
     }
 
     @PostMapping(path = "/requestContact")

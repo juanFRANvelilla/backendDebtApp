@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="contactRequest")
+@Table(name="RequestContact")
 @Builder
 public class RequestContact {
     @Id

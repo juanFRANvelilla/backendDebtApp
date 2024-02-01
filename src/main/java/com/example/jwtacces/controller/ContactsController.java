@@ -1,6 +1,7 @@
 package com.example.jwtacces.controller;
 
 import com.example.jwtacces.DTO.RequestContactDTO;
+import com.example.jwtacces.DTO.UserDTO;
 import com.example.jwtacces.exceptions.NoContactsException;
 import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.models.contact.Contact;
@@ -37,28 +38,40 @@ public class ContactsController {
     private ContactRequestRepository contactRequestRepository;
 
 
+    /* obtiene un set de usuarios buscandolos por el id */
+    private Set<UserDTO> getUsersById(Set<Integer> contactId) throws UsernameNotFoundException{
+        Set<UserDTO>contacts = new HashSet<UserDTO>();
+        for(Integer id : contactId){
+            UserEntity contact = userRepository.findById(id)
+                    .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+            UserDTO userDTO = UserDTO.builder()
+                    .username(contact.getUsername())
+                    .firstName(contact.getFirstName())
+                    .lastName(contact.getLastName())
+                    .email(contact.getEmail())
+                    .build();
+            contacts.add(userDTO);
+        }
+        return contacts;
+    }
+
+    /* obtienes al usuario que ha realizado la peticion con un jwt */
     public UserEntity getUserFromAuthentification(Authentication authentication){
         String username = authentication.getName();
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
         return user;
-
     }
 
+    /* retorna el user que se corresponde a la peticion de amistad */
     public UserEntity getUserFromRequestContactDTO(RequestContactDTO requestContactDTO){
         String usernameContact = requestContactDTO.getUsername();
-        String phoneContact = requestContactDTO.getPhone();
         UserEntity contact = null;
         if(usernameContact != ""){
             contact = userRepository.findByUsername(usernameContact)
                     .orElseThrow(()-> new UsernameNotFoundException("User not found"));
         }
-//        else if(phoneContact != ""){
-//            contact = userRepository.findByPhone(phoneContact)
-//                    .orElseThrow(()-> new UsernameNotFoundException("User not found"));
-//        }
         return contact;
-
     }
 
     @GetMapping(path = "/welcome")
@@ -69,42 +82,52 @@ public class ContactsController {
         return welcome;
     }
 
-    @GetMapping(path = "/showContact")
-    public ResponseEntity<?> showContact(){
+    /* devuelve los contactos que tiene cada usuario, si no tiene devolvera null */
+    @GetMapping(path = "/showContacts")
+    public ResponseEntity<?> showContacts(){
         Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
         Set<Integer>contactsId = new HashSet<Integer>();
+        Set<UserDTO>contacts;
         try {
+            //busca los id en la tabla contactos, solo se obtiene de info el id
             contactsId = contactRepository.findContactIdsByUserId(Long.valueOf(user.getId()))
                     .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+            //busca info de los contactos haciendo uso de los anteriores id
+            contacts = getUsersById(contactsId);
+
         } catch (EmptyResultDataAccessException e) {
-            httpResponse.put("contacts", "no tiene contactos");
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(httpResponse);
-//            throw new NoContactsException("El usuario no tiene contactos", e);
+            return ResponseEntity.badRequest().body(null);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.badRequest().body(null);
         }
-        Set<String>contactsUsername = new HashSet<String>();
-        for(Integer id : contactsId){
-            UserEntity contact = userRepository.findById(id)
-                    .orElseThrow(()-> new UsernameNotFoundException("User not found"));
-            contactsUsername.add(contact.getUsername());
-        }
-        httpResponse.put("contacts", contactsUsername);
-        return ResponseEntity.status(HttpStatus.OK).body(httpResponse);
+
+        httpResponse.put("contacts", contacts);
+        return ResponseEntity.ok().body(httpResponse);
     }
 
+
+
+
+    /*
+    realiza la logica que se encarga de mandar una soliticud a otro usuario para ser contactos, siempre y cuando
+    este usuario exista, no seas tu mismo, ni haya una solicitud pendiente
+     */
     @PostMapping(path = "/requestContact")
     public ResponseEntity<?> doRequestContact(@Valid @RequestBody RequestContactDTO requestContactDTO){
+        Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
         UserEntity contact = getUserFromRequestContactDTO(requestContactDTO);
         if(contact == null || user.getId() == contact.getId()){
-            return ResponseEntity.badRequest().body("Body del request invalido");
+            httpResponse.put("error","No puedes mandar solicitud a ese numero");
+            return ResponseEntity.badRequest().body(httpResponse);
         }
         if (contactRepository.isAlreadyContact(Long.valueOf(user.getId()), Long.valueOf(contact.getId()))) {
-            return ResponseEntity.badRequest().body("Ya son contactos");
+            httpResponse.put("error","Ya tienes a ese usuario como contacto");
+            return ResponseEntity.badRequest().body(httpResponse);
         }
         else{
             if(!contactRequestRepository.requestAlreadyExist(Long.valueOf(contact.getId()), Long.valueOf(user.getId()))){
@@ -114,31 +137,40 @@ public class ContactsController {
                         .accept(false)
                         .build();
                 contactRequestRepository.save(requestContact);
-                return ResponseEntity.ok("Solicitud de contacto enviada con éxito");
+                httpResponse.put("response","Solicitud de contacto enviada con éxito");
+                return ResponseEntity.ok(httpResponse);
             }
-            return ResponseEntity.badRequest().body("Ya has enviado una solicitud a esa persona anteriormente");
+            httpResponse.put("error","Ya has enviado una solicitud a esa persona anteriormente");
+            return ResponseEntity.badRequest().body(httpResponse);
         }
     }
 
+    /*
+    devuelve la lista de usuarios que tienes pendientes de aceptar
+     */
     @GetMapping(path = "/showRequestContact")
-    public Set<String> showRequestContact(){
+    public ResponseEntity<?> showRequestContact(){
+        Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
-
         Set<Integer>contactRequestSendersId = new HashSet<Integer>();
+        Set<UserDTO>contacts;
         try {
-            contactRequestSendersId = contactRequestRepository.findRequiestContactIdsByUserId(Long.valueOf(user.getId()))
+            //busca el id de los usuarios que tienes pendiente de aceptar
+            // (ya que en la tabla RequestContact solo aparece como info el id de los pendientes)
+            contactRequestSendersId = contactRequestRepository.findRequestContactIdsByUserId(Long.valueOf(user.getId()))
                     .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+            //busca info de los contactos haciendo uso de los anteriores id
+            contacts = getUsersById(contactRequestSendersId);
         } catch (EmptyResultDataAccessException e) {
-            throw new NoContactsException("El usuario no tiene peticiones de contacto", e);
+            return ResponseEntity.badRequest().body(httpResponse);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.badRequest().body(httpResponse);
         }
-        Set<String>contactsUsername = new HashSet<String>();
-        for(Integer id : contactRequestSendersId){
-            UserEntity contact = userRepository.findById(id)
-                    .orElseThrow(()-> new UsernameNotFoundException("User not found"));
-            contactsUsername.add(contact.getUsername());
-        }
-        return contactsUsername;
+
+        httpResponse.put("pendingContacs",contacts);
+        return ResponseEntity.ok().body(httpResponse);
     }
 
     @Transactional
@@ -148,7 +180,7 @@ public class ContactsController {
         UserEntity user = getUserFromAuthentification(authentication);
         UserEntity contact = getUserFromRequestContactDTO(requestContactDTO);
         if(contact == null || user.getId() == contact.getId()){
-            return ResponseEntity.badRequest().body("Body del request invalido");
+            return ResponseEntity.badRequest().body(null);
         }
         if (contactRepository.isAlreadyContact(Long.valueOf(user.getId()), Long.valueOf(contact.getId()))) {
             return ResponseEntity.badRequest().body("Ya son contactos");

@@ -111,32 +111,23 @@ public class ContactsController {
     realiza la logica que se encarga de mandar una soliticud a otro usuario para ser contactos, siempre y cuando
     este usuario exista, no seas tu mismo, ni haya una solicitud pendiente
      */
+    /*
+    realiza la logica que se encarga de mandar una soliticud a otro usuario para ser contactos, siempre y cuando
+    este usuario exista, no seas tu mismo, ni haya una solicitud pendiente
+     */
     @PostMapping(path = "/requestContact")
     public ResponseEntity<?> doRequestContact(@Valid @RequestBody RequestContactDTO requestContactDTO){
         Map<String, Object> httpResponse = new HashMap<>();
-        ServerResponseDTO response = new ServerResponseDTO();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
-        UserEntity contact = new UserEntity();
-        try{
-            contact = getUserFromRequestContactDTO(requestContactDTO);
-        } catch (UsernameNotFoundException e) {
-//            response.setStatus("error");
-//            response.setMessage("No puedes mandar solicitud a ese numero");
-            httpResponse.put("error", "hola");
-            return ResponseEntity.ok().body(httpResponse);
-        }
-
-
-        if(user.getId() == contact.getId()){
-            response.setStatus("error");
-            response.setMessage("No puedes mandar solicitud a ese numero");
-            return ResponseEntity.badRequest().body(response);
+        UserEntity contact = getUserFromRequestContactDTO(requestContactDTO);
+        if(contact == null || user.getId() == contact.getId()){
+            httpResponse.put("error","No puedes mandar solicitud a ese numero");
+            return ResponseEntity.badRequest().body(httpResponse);
         }
         if (contactRepository.isAlreadyContact(Long.valueOf(user.getId()), Long.valueOf(contact.getId()))) {
-            response.setStatus("error");
-            response.setMessage("Ya tienes a ese usuario como contacto");
-            return ResponseEntity.badRequest().body(response);
+            httpResponse.put("error","Ya tienes a ese usuario como contacto");
+            return ResponseEntity.badRequest().body(httpResponse);
         }
         else{
             if(!contactRequestRepository.requestAlreadyExist(Long.valueOf(contact.getId()), Long.valueOf(user.getId()))){
@@ -146,13 +137,11 @@ public class ContactsController {
                         .accept(false)
                         .build();
                 contactRequestRepository.save(requestContact);
-                response.setStatus("ok");
-                response.setMessage("Solicitud de contacto enviada con éxito");
-                return ResponseEntity.ok(response);
+                httpResponse.put("response","Solicitud de contacto enviada con éxito");
+                return ResponseEntity.ok(httpResponse);
             }
-            response.setStatus("error");
-            response.setMessage("Ya has enviado una solicitud a esa persona anteriormente");
-            return ResponseEntity.badRequest().body(response);
+            httpResponse.put("error","Ya has enviado una solicitud a esa persona anteriormente");
+            return ResponseEntity.badRequest().body(httpResponse);
         }
     }
 

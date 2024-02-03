@@ -1,6 +1,7 @@
 package com.example.jwtacces.controller;
 
 import com.example.jwtacces.DTO.RequestContactDTO;
+import com.example.jwtacces.DTO.ServerResponseDTO;
 import com.example.jwtacces.DTO.UserDTO;
 import com.example.jwtacces.exceptions.NoContactsException;
 import com.example.jwtacces.models.UserEntity;
@@ -67,10 +68,8 @@ public class ContactsController {
     public UserEntity getUserFromRequestContactDTO(RequestContactDTO requestContactDTO){
         String usernameContact = requestContactDTO.getUsername();
         UserEntity contact = null;
-        if(usernameContact != ""){
-            contact = userRepository.findByUsername(usernameContact)
-                    .orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        }
+        contact = userRepository.findByUsername(usernameContact)
+                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
         return contact;
     }
 
@@ -115,16 +114,29 @@ public class ContactsController {
     @PostMapping(path = "/requestContact")
     public ResponseEntity<?> doRequestContact(@Valid @RequestBody RequestContactDTO requestContactDTO){
         Map<String, Object> httpResponse = new HashMap<>();
+        ServerResponseDTO response = new ServerResponseDTO();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
-        UserEntity contact = getUserFromRequestContactDTO(requestContactDTO);
-        if(contact == null || user.getId() == contact.getId()){
-            httpResponse.put("error","No puedes mandar solicitud a ese numero");
-            return ResponseEntity.badRequest().body(httpResponse);
+        UserEntity contact = new UserEntity();
+        try{
+            contact = getUserFromRequestContactDTO(requestContactDTO);
+        } catch (UsernameNotFoundException e) {
+//            response.setStatus("error");
+//            response.setMessage("No puedes mandar solicitud a ese numero");
+            httpResponse.put("error", "hola");
+            return ResponseEntity.ok().body(httpResponse);
+        }
+
+
+        if(user.getId() == contact.getId()){
+            response.setStatus("error");
+            response.setMessage("No puedes mandar solicitud a ese numero");
+            return ResponseEntity.badRequest().body(response);
         }
         if (contactRepository.isAlreadyContact(Long.valueOf(user.getId()), Long.valueOf(contact.getId()))) {
-            httpResponse.put("error","Ya tienes a ese usuario como contacto");
-            return ResponseEntity.badRequest().body(httpResponse);
+            response.setStatus("error");
+            response.setMessage("Ya tienes a ese usuario como contacto");
+            return ResponseEntity.badRequest().body(response);
         }
         else{
             if(!contactRequestRepository.requestAlreadyExist(Long.valueOf(contact.getId()), Long.valueOf(user.getId()))){
@@ -134,11 +146,13 @@ public class ContactsController {
                         .accept(false)
                         .build();
                 contactRequestRepository.save(requestContact);
-                httpResponse.put("response","Solicitud de contacto enviada con éxito");
-                return ResponseEntity.ok(httpResponse);
+                response.setStatus("ok");
+                response.setMessage("Solicitud de contacto enviada con éxito");
+                return ResponseEntity.ok(response);
             }
-            httpResponse.put("error","Ya has enviado una solicitud a esa persona anteriormente");
-            return ResponseEntity.badRequest().body(httpResponse);
+            response.setStatus("error");
+            response.setMessage("Ya has enviado una solicitud a esa persona anteriormente");
+            return ResponseEntity.badRequest().body(response);
         }
     }
 

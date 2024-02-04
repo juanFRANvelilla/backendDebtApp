@@ -1,9 +1,7 @@
 package com.example.jwtacces.controller;
 
 import com.example.jwtacces.DTO.RequestContactDTO;
-import com.example.jwtacces.DTO.ServerResponseDTO;
 import com.example.jwtacces.DTO.UserDTO;
-import com.example.jwtacces.exceptions.NoContactsException;
 import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.models.contact.Contact;
 import com.example.jwtacces.models.contact.RequestContact;
@@ -14,7 +12,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -111,16 +108,19 @@ public class ContactsController {
     realiza la logica que se encarga de mandar una soliticud a otro usuario para ser contactos, siempre y cuando
     este usuario exista, no seas tu mismo, ni haya una solicitud pendiente
      */
-    /*
-    realiza la logica que se encarga de mandar una soliticud a otro usuario para ser contactos, siempre y cuando
-    este usuario exista, no seas tu mismo, ni haya una solicitud pendiente
-     */
     @PostMapping(path = "/requestContact")
     public ResponseEntity<?> doRequestContact(@Valid @RequestBody RequestContactDTO requestContactDTO){
         Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
-        UserEntity contact = getUserFromRequestContactDTO(requestContactDTO);
+        UserEntity contact = new UserEntity();
+        try{
+            contact = getUserFromRequestContactDTO(requestContactDTO);
+        } catch (UsernameNotFoundException e) {
+            httpResponse.put("error","No puedes mandar solicitud a ese numero");
+            return ResponseEntity.badRequest().body(httpResponse);
+        }
+
         if(contact == null || user.getId() == contact.getId()){
             httpResponse.put("error","No puedes mandar solicitud a ese numero");
             return ResponseEntity.badRequest().body(httpResponse);
@@ -150,7 +150,6 @@ public class ContactsController {
      */
     @GetMapping(path = "/showRequestContact")
     public ResponseEntity<?> showRequestContact(){
-//        Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
         Set<Integer>contactRequestSendersId = new HashSet<Integer>();
@@ -164,12 +163,9 @@ public class ContactsController {
             //busca info de los contactos haciendo uso de los anteriores id
             contacts = getUsersById(contactRequestSendersId);
         } catch (EmptyResultDataAccessException e) {
-//            return ResponseEntity.badRequest().body(httpResponse);
         } catch (UsernameNotFoundException e) {
-//            return ResponseEntity.badRequest().body(httpResponse);
         }
 
-//        httpResponse.put("pendingContacs",contacts);
         return ResponseEntity.ok().body(contacts);
     }
 

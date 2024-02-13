@@ -45,6 +45,7 @@ public class AccesController {
         Optional<PhoneValidation> phoneValidationOptional = phoneValidationRepository.findPhoneValidationByPhone(phoneValidation.getUsername());
 
         if (phoneValidationOptional.isPresent() && phoneValidationOptional.get().isValid()) {
+            httpResponse.put("error","El numero ya esta registrado en la base de datos");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
 

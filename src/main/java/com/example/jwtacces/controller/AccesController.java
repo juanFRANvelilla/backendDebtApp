@@ -46,7 +46,7 @@ public class AccesController {
 
         if (phoneValidationOptional.isPresent() && phoneValidationOptional.get().isValid()) {
             httpResponse.put("error","El numero ya esta registrado en la base de datos");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(httpResponse);
         }
 
         //agregamos un nuevo registro de validacion de telefono con la fecha actual, tendra 0 intentos y sera !valid

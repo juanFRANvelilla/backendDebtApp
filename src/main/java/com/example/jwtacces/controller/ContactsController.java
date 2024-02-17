@@ -139,9 +139,10 @@ public class ContactsController {
                 contactRequestRepository.save(requestContact);
                 httpResponse.put("response","Solicitud de contacto enviada con éxito");
                 return ResponseEntity.ok(httpResponse);
+            } else {
+                httpResponse.put("error","Ya has enviado una solicitud a esa persona anteriormente");
+                return ResponseEntity.badRequest().body(httpResponse);
             }
-            httpResponse.put("error","Ya has enviado una solicitud a esa persona anteriormente");
-            return ResponseEntity.badRequest().body(httpResponse);
         }
     }
 

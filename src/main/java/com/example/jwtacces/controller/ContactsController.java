@@ -169,20 +169,36 @@ public class ContactsController {
         return ResponseEntity.ok().body(contacts);
     }
 
+
+    /*
+    funcion que se encarga de aceptar la solicitud de contacto y marcar como aceptadas en true las filas involucradas
+    si por ejemplo dados dos usuarios x e y, x tiene solicitud de contacto de y (y viceversa) ambos pasaran a ser contactos
+    y las dos solicitudes de contacto estaran aceptadas y ya no apareceran como notificaciones
+     */
     @Transactional
     @PostMapping(path = "/acceptRequestContact")
     public ResponseEntity<?> acceptRequestContact(@Valid @RequestBody RequestContactDTO requestContactDTO){
+        Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = getUserFromAuthentification(authentication);
         UserEntity contact = getUserFromRequestContactDTO(requestContactDTO);
+        //comprueba que el user que se manda como request no sea nulo ni sea el mismo usuario
         if(contact == null || user.getId() == contact.getId()){
-            return ResponseEntity.badRequest().body(null);
+            httpResponse.put("error","Error en el request");
+            return ResponseEntity.badRequest().body(httpResponse);
         }
+        //comprueba que no sean ya contactos
         if (contactRepository.isAlreadyContact(Long.valueOf(user.getId()), Long.valueOf(contact.getId()))) {
-            return ResponseEntity.badRequest().body("Ya son contactos");
+            httpResponse.put("error","Ya son contactos");
+            return ResponseEntity.badRequest().body(httpResponse);
         }
-        if(contactRequestRepository.validateRequest(Long.valueOf(user.getId()), Long.valueOf(contact.getId())) > 0
-            || contactRequestRepository.validateRequest(Long.valueOf(contact.getId()), Long.valueOf(user.getId())) > 0){
+
+        //actualiza las filas de la tabla en la bd aceptando la solicitud y tambien la posible solicitud que tenga el otro contacto
+        //para que no se queden solicitudes pendientes
+        int requestAccepted = 0;
+        requestAccepted += contactRequestRepository.validateRequest(Long.valueOf(user.getId()), Long.valueOf(contact.getId()));
+        requestAccepted += contactRequestRepository.validateRequest(Long.valueOf(contact.getId()), Long.valueOf(user.getId()));
+        if(requestAccepted > 0){
             Contact addContact = Contact.builder()
                     .userId(Long.valueOf(user.getId()))
                     .user2Id(Long.valueOf(contact.getId()))
@@ -193,8 +209,10 @@ public class ContactsController {
                     .build();
             contactRepository.save(addContact);
             contactRepository.save(addContactInverse);
-            return ResponseEntity.ok("Contacto agregado");
+            httpResponse.put("response","Ya son contactos");
+            return ResponseEntity.ok(httpResponse);
         }
-        return ResponseEntity.badRequest().body("Error al agregar el contacto");
+        httpResponse.put("response","Error al agregar el contacto");
+        return ResponseEntity.badRequest().body(httpResponse);
     }
 }

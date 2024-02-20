@@ -210,7 +210,7 @@ public class ContactsController {
                     .build();
             contactRepository.save(addContact);
             contactRepository.save(addContactInverse);
-            httpResponse.put("response","Ya son contactos");
+            httpResponse.put("response","Contacto agregado");
             return ResponseEntity.ok(httpResponse);
         }
         httpResponse.put("response","Error al agregar el contacto");

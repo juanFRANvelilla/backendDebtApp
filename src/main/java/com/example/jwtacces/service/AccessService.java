@@ -1,27 +1,30 @@
-package com.example.jwtacces.controller;
+package com.example.jwtacces.service;
 
 import com.example.jwtacces.DTO.CreateUserDTO;
-import com.example.jwtacces.models.*;
+import com.example.jwtacces.models.ERole;
+import com.example.jwtacces.models.RoleEntity;
+import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.models.registration.PhoneValidation;
-import com.example.jwtacces.repository.registration.PhoneValidationRepository;
 import com.example.jwtacces.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.jwtacces.repository.registration.PhoneValidationRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@RestController
-@RequestMapping(path = "/api")
-public class AccesController {
-
+@Service
+public class AccessService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -39,7 +42,6 @@ public class AccesController {
     que ser validado, en la siguiente llamada es cuando si el codigo corresponde se agregan todos
     los datos del user a la aplicacion
      */
-    @PostMapping(path = "/confirmPhone")
     public ResponseEntity<?> confirmPhone(@Valid @RequestBody PhoneValidation phoneValidation) {
         Map<String, Object> httpResponse = new HashMap<>();
         Optional<PhoneValidation> phoneValidationOptional = phoneValidationRepository.findPhoneValidationByPhone(phoneValidation.getUsername());
@@ -68,8 +70,6 @@ public class AccesController {
     ademas no se han empleado mas de 3 intentos en realizar la autentificacion se creara un '
     nuevo user
      */
-    @Transactional
-    @PostMapping(path = "/validatePhone")
     public ResponseEntity<?>validatePhone(@Valid @RequestBody CreateUserDTO createUserDTO){
         Map<String, Object> httpResponse = new HashMap<>();
         PhoneValidation phoneValidation = phoneValidationRepository.findPhoneValidationByPhone(createUserDTO.getUsername())
@@ -102,8 +102,8 @@ public class AccesController {
     private UserEntity createUser(CreateUserDTO createUserDTO){
         Set<RoleEntity> roles = new HashSet<RoleEntity>();
         RoleEntity userRole = RoleEntity.builder()
-                                        .name(ERole.valueOf("USER"))
-                                        .build();
+                .name(ERole.valueOf("USER"))
+                .build();
         roles.add(userRole);
 
         UserEntity newUser = UserEntity.builder()
@@ -119,7 +119,6 @@ public class AccesController {
         return newUser;
     }
 
-    @DeleteMapping(path = "/deleteUser")
     public void deleteUser(@RequestParam String id){
         userRepository.deleteById(Integer.parseInt(id));
     }

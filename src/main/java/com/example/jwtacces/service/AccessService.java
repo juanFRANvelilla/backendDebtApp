@@ -75,19 +75,25 @@ public class AccessService {
         PhoneValidation phoneValidation = phoneValidationRepository.findPhoneValidationByPhone(createUserDTO.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error de servidor, vuelve a intentar el registro"));
 
+        if (phoneValidation.isValid()) {
+            httpResponse.put("error", "Ya existe un usuario con ese numero de telefono");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(httpResponse);
+        }
+        if (phoneValidation.getAttempts() >= 3) {
+            httpResponse.put("error", "Has superado el numero de intentos permitidos");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(httpResponse);
+        }
         if (phoneValidation.getVerificationCode().equals(createUserDTO.getVerificationCode())  ) {
             phoneValidationRepository.setPhoneValidationTrue(createUserDTO.getUsername());
             createUser(createUserDTO);
             httpResponse.put("response", "Bienvenido, registro completado con exito");
-
             return ResponseEntity.status(HttpStatus.CREATED).body(httpResponse);
         }
         phoneValidationRepository.increaseAttempts(createUserDTO.getUsername());
-        if (phoneValidation.getAttempts() >= 2) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(null);
-        }
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(null);

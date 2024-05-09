@@ -1,7 +1,6 @@
 package com.example.jwtacces.service.utils;
 
 import com.example.jwtacces.DTO.UserDTO;
-import com.example.jwtacces.DTO.UsernameDTO;
 import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +44,9 @@ public class ServiceUtils {
     }
 
     /* retorna el user que se corresponde a la peticion de amistad */
-    public UserEntity getUserFromUsernameDTO(UsernameDTO usernameDTO){
-        String usernameContact = usernameDTO.getUsername();
-        UserEntity contact = null;
-        contact = userRepository.findByUsername(usernameContact)
+    public UserEntity getUserFromUsername(String username){
+        UserEntity userEntity = userRepository.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        return contact;
+        return userEntity;
     }
 }

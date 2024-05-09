@@ -1,16 +1,7 @@
 package com.example.jwtacces.controller;
 
-import com.example.jwtacces.DTO.UsernameDTO;
-import com.example.jwtacces.DTO.UserDTO;
-import com.example.jwtacces.models.UserEntity;
-import com.example.jwtacces.models.contact.Contact;
-import com.example.jwtacces.models.contact.RequestContact;
-import com.example.jwtacces.repository.UserRepository;
-import com.example.jwtacces.repository.contact.ContactRepository;
-import com.example.jwtacces.repository.contact.ContactRequestRepository;
 import com.example.jwtacces.service.ContactService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class ContactsController {
     @Autowired
     private ContactService contactService;
-
-
-
 
     @GetMapping(path = "/welcome")
     public String welcome() {
@@ -43,9 +31,9 @@ public class ContactsController {
     realiza la logica que se encarga de mandar una soliticud a otro usuario para ser contactos, siempre y cuando
     este usuario exista, no seas tu mismo, ni haya una solicitud pendiente
      */
-    @PostMapping(path = "/requestContact")
-    public ResponseEntity<?> doRequestContact(@Valid @RequestBody UsernameDTO usernameDTO){
-        return contactService.doRequestContact(usernameDTO);
+    @GetMapping(path = "/requestContact")
+    public ResponseEntity<?> doRequestContact(@RequestParam String contactUsername){
+        return contactService.doRequestContact(contactUsername);
     }
 
     /*
@@ -63,8 +51,8 @@ public class ContactsController {
     y las dos solicitudes de contacto estaran aceptadas y ya no apareceran como notificaciones
      */
     @Transactional
-    @PostMapping(path = "/acceptRequestContact")
-    public ResponseEntity<?> acceptRequestContact(@Valid @RequestBody UsernameDTO usernameDTO){
-        return contactService.acceptRequestContact(usernameDTO);
+    @GetMapping(path = "/acceptRequestContact")
+    public ResponseEntity<?> acceptRequestContact(@RequestParam String contactUsername){
+        return contactService.acceptRequestContact(contactUsername);
     }
 }

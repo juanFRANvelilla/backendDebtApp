@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 public class CreateDebtDTO {
-    private String creditorUsername;
     private String debtorUsername;
     private Double amount;
-    private String date;
     private String description;
 }

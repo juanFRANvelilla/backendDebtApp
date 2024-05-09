@@ -1,7 +1,10 @@
 package com.example.jwtacces.models.debt;
 
+import com.example.jwtacces.models.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -14,10 +17,14 @@ public class Debt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long creditorId;
-    private Long debtorId;
+    @ManyToOne
+    @JoinColumn(name = "creditor_id")
+    private UserEntity creditor;
+    @ManyToOne
+    @JoinColumn(name = "debtor_id")
+    private UserEntity debtor;
     private Double amount;
-    private String date;
+    private LocalDateTime date;
     private String description;
     private Boolean isPaid;
 }

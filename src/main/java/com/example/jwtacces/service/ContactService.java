@@ -1,11 +1,9 @@
 package com.example.jwtacces.service;
 
 import com.example.jwtacces.DTO.UserDTO;
-import com.example.jwtacces.DTO.UsernameDTO;
 import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.models.contact.Contact;
 import com.example.jwtacces.models.contact.RequestContact;
-import com.example.jwtacces.repository.UserRepository;
 import com.example.jwtacces.repository.contact.ContactRepository;
 import com.example.jwtacces.repository.contact.ContactRequestRepository;
 import com.example.jwtacces.service.utils.ServiceUtils;
@@ -26,9 +24,6 @@ import java.util.Set;
 
 @Service
 public class ContactService {
-    @Autowired
-    private UserRepository userRepository;
-
     @Autowired
     private ContactRepository contactRepository;
 
@@ -71,13 +66,13 @@ public class ContactService {
 
 
 
-    public ResponseEntity<?> doRequestContact(@Valid @RequestBody UsernameDTO usernameDTO){
+    public ResponseEntity<?> doRequestContact(String usernameDTO){
         Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = serviceUtils.getUserFromAuthentification(authentication);
         UserEntity contact = new UserEntity();
         try{
-            contact = serviceUtils.getUserFromUsernameDTO(usernameDTO);
+            contact = serviceUtils.getUserFromUsername(usernameDTO);
         } catch (UsernameNotFoundException e) {
             httpResponse.put("error","No puedes mandar solicitud a ese numero");
             return ResponseEntity.badRequest().body(httpResponse);
@@ -124,16 +119,15 @@ public class ContactService {
         } catch (EmptyResultDataAccessException e) {
         } catch (UsernameNotFoundException e) {
         }
-
         return ResponseEntity.ok().body(contacts);
     }
 
 
-    public ResponseEntity<?> acceptRequestContact(@Valid @RequestBody UsernameDTO usernameDTO){
+    public ResponseEntity<?> acceptRequestContact(String usernameDTO){
         Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = serviceUtils.getUserFromAuthentification(authentication);
-        UserEntity contact = serviceUtils.getUserFromUsernameDTO(usernameDTO);
+        UserEntity contact = serviceUtils.getUserFromUsername(usernameDTO);
         //comprueba que el user que se manda como request no sea nulo ni sea el mismo usuario
         if(contact == null || user.getId() == contact.getId()){
             httpResponse.put("error","Error en el request");

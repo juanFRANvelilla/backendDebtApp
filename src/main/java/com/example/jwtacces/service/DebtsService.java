@@ -1,6 +1,7 @@
 package com.example.jwtacces.service;
 
 import com.example.jwtacces.models.UserEntity;
+import com.example.jwtacces.models.debt.BalanceDTO;
 import com.example.jwtacces.models.debt.CreateDebtDTO;
 import com.example.jwtacces.models.debt.Debt;
 import com.example.jwtacces.repository.debt.DebtRepository;
@@ -24,6 +25,34 @@ public class DebtsService {
 
     @Autowired
     private ServiceUtils serviceUtils;
+
+    private static double getTotalAmount(List<Debt> debts){
+        Double totalAmount = 0.0;
+        for(Debt debt: debts){
+            totalAmount += debt.getAmount();
+        }
+        return totalAmount;
+    }
+
+
+
+    public ResponseEntity<?> getBalance(){
+        Map<String, Object> httpResponse = new HashMap<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity creditor = serviceUtils.getUserFromAuthentification(authentication);
+
+        List<Debt> debtsAsDebtor = debtRepository.getCurrentDebtsAsDebtor(creditor);
+        List<Debt> debtsAsCreditor = debtRepository.getCurrentDebtsAsCreditor(creditor);
+
+        BalanceDTO balanceDTO = BalanceDTO.builder()
+                .owe(getTotalAmount(debtsAsDebtor))
+                .owed(getTotalAmount(debtsAsCreditor))
+                .build();
+
+        httpResponse.put("balance", balanceDTO);
+
+        return ResponseEntity.ok().body(httpResponse);
+    }
 
     public ResponseEntity<?> getDebtByCreditorAndDebtor(@Valid @RequestBody String debtorUsername){
         Map<String, Object> httpResponse = new HashMap<>();
@@ -89,6 +118,30 @@ public class DebtsService {
         }
 
         else {
+            //obtener deudas que tienes con el que va a ser tu deudor para ver si le debes algo y calcular la diferencia
+            List<Debt> currentDebts = debtRepository.getDebtByCreditorAndDebtorNotPaid(debtor, creditor);
+            for(Debt debt: currentDebts){
+                //si el monto de la deuda nueva es menor al que ya tenias pendiente, se le resta a esta ultima el valor de la nueva
+                //y la nueva aparecera como ya saldada
+                if(newDebt.getAmount() < debt.getAmount()){
+                    debt.setAmount(newDebt.getAmount() - debt.getAmount());
+                    newDebt.setIsPaid(true);
+                }
+                //si el monto es igual se saldaran las dos deudas
+                else if(newDebt.getAmount() == debt.getAmount()) {
+                    debt.setIsPaid(true);
+                    newDebt.setIsPaid(true);
+
+                }
+                //si el monto de la deuda nueva es mayor al de la que ya tenias pendiente, la deuda pendiente se quedara saldada y
+                //el monto de la nueva se restara
+                else {
+                    debt.setIsPaid(true);
+                    newDebt.setAmount(newDebt.getAmount() - debt.getAmount());
+                }
+                //guardar cambios en bd
+                debtRepository.save(debt);
+            }
             LocalDateTime currentDateTime = LocalDateTime.now();
             Debt debt = Debt.builder()
                     .creditor(creditor)
@@ -96,7 +149,7 @@ public class DebtsService {
                     .amount(newDebt.getAmount())
                     .date(currentDateTime)
                     .description(newDebt.getDescription())
-                    .isPaid(false)
+                    .isPaid(newDebt.getIsPaid())
                     .build();
             debtRepository.save(debt);
             httpResponse.put("response","Deuda guardada en la base de datos");

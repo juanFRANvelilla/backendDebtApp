@@ -14,6 +14,15 @@ public class DebtsController {
     @Autowired
     private DebtsService debtsService;
 
+
+    /*
+    Obtiene el balance actual de deudas que tienes y que debes para mostrar en la pantalla home
+     */
+    @GetMapping(path = "/getBalance")
+    public ResponseEntity<?> getBalance(){
+        return debtsService.getBalance();
+    }
+
     /*
      Obtiene las deudas entre un usuario y su deudor incluyendo las que ya han sido pagadas, para ver en historial
      */
@@ -41,6 +50,11 @@ public class DebtsController {
     }
 
 
+
+    /*
+    Guarda una nueva deuda, teniendo en cuenta las deudas anteriores que debias a tu nuevo deudor, para calcular la diferencia
+    y de esta forma podre saldar cuentas de forma automaticas
+     */
     @PostMapping(path = "/saveDebt")
     public ResponseEntity<?> saveDebt(@Valid @RequestBody CreateDebtDTO createDebtDTO){
         return debtsService.saveDebt(createDebtDTO);

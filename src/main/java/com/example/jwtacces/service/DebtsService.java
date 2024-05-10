@@ -37,7 +37,6 @@ public class DebtsService {
 
 
     public ResponseEntity<?> getBalance(){
-        Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity creditor = serviceUtils.getUserFromAuthentification(authentication);
 
@@ -49,9 +48,7 @@ public class DebtsService {
                 .owed(getTotalAmount(debtsAsCreditor))
                 .build();
 
-        httpResponse.put("balance", balanceDTO);
-
-        return ResponseEntity.ok().body(httpResponse);
+        return ResponseEntity.ok().body(balanceDTO);
     }
 
     public ResponseEntity<?> getDebtByCreditorAndDebtor(@Valid @RequestBody String debtorUsername){
@@ -126,11 +123,13 @@ public class DebtsService {
                 if(newDebt.getAmount() < debt.getAmount()){
                     debt.setAmount(newDebt.getAmount() - debt.getAmount());
                     newDebt.setIsPaid(true);
+                    break;
                 }
                 //si el monto es igual se saldaran las dos deudas
                 else if(newDebt.getAmount() == debt.getAmount()) {
                     debt.setIsPaid(true);
                     newDebt.setIsPaid(true);
+                    break;
 
                 }
                 //si el monto de la deuda nueva es mayor al de la que ya tenias pendiente, la deuda pendiente se quedara saldada y

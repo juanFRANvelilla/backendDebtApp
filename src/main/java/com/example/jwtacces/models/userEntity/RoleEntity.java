@@ -1,4 +1,4 @@
-package com.example.jwtacces.models;
+package com.example.jwtacces.models.userEntity;
 
 
 import jakarta.persistence.*;

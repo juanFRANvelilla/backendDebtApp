@@ -1,4 +1,4 @@
-package com.example.jwtacces.DTO;
+package com.example.jwtacces.DTO.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,6 @@
 package com.example.jwtacces.controller;
 
-import com.example.jwtacces.models.debt.CreateDebtDTO;
+import com.example.jwtacces.DTO.debt.CreateDebtDTO;
 import com.example.jwtacces.service.DebtsService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.example.jwtacces.models.debt;
+package com.example.jwtacces.DTO.debt;
 
 import lombok.*;
 

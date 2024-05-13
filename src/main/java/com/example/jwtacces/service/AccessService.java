@@ -1,21 +1,18 @@
 package com.example.jwtacces.service;
 
-import com.example.jwtacces.DTO.CreateUserDTO;
-import com.example.jwtacces.models.ERole;
-import com.example.jwtacces.models.RoleEntity;
-import com.example.jwtacces.models.UserEntity;
+import com.example.jwtacces.DTO.user.CreateUserDTO;
+import com.example.jwtacces.models.userEntity.ERole;
+import com.example.jwtacces.models.userEntity.RoleEntity;
+import com.example.jwtacces.models.userEntity.UserEntity;
 import com.example.jwtacces.models.registration.PhoneValidation;
 import com.example.jwtacces.repository.UserRepository;
 import com.example.jwtacces.repository.registration.PhoneValidationRepository;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;

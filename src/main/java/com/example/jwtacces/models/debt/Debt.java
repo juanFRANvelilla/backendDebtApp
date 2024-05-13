@@ -1,6 +1,6 @@
 package com.example.jwtacces.models.debt;
 
-import com.example.jwtacces.models.UserEntity;
+import com.example.jwtacces.models.userEntity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

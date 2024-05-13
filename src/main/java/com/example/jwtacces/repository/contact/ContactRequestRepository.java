@@ -1,6 +1,5 @@
 package com.example.jwtacces.repository.contact;
 
-import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.models.contact.RequestContact;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

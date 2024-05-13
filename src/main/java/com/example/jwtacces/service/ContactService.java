@@ -1,13 +1,12 @@
 package com.example.jwtacces.service;
 
-import com.example.jwtacces.DTO.UserDTO;
-import com.example.jwtacces.models.UserEntity;
+import com.example.jwtacces.DTO.user.UserDTO;
+import com.example.jwtacces.models.userEntity.UserEntity;
 import com.example.jwtacces.models.contact.Contact;
 import com.example.jwtacces.models.contact.RequestContact;
 import com.example.jwtacces.repository.contact.ContactRepository;
 import com.example.jwtacces.repository.contact.ContactRequestRepository;
 import com.example.jwtacces.service.utils.ServiceUtils;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.HashSet;

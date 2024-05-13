@@ -1,6 +1,5 @@
 package com.example.jwtacces.models.contact;
 
-import com.example.jwtacces.models.ERole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

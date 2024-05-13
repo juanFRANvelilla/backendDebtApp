@@ -1,19 +1,13 @@
 package com.example.jwtacces.controller;
 
-import com.example.jwtacces.DTO.CreateUserDTO;
-import com.example.jwtacces.models.*;
+import com.example.jwtacces.DTO.user.CreateUserDTO;
 import com.example.jwtacces.models.registration.PhoneValidation;
 import com.example.jwtacces.service.AccessService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @RestController
 @RequestMapping(path = "/api")

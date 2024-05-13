@@ -1,6 +1,6 @@
 package com.example.jwtacces.repository.debt;
 
-import com.example.jwtacces.models.UserEntity;
+import com.example.jwtacces.models.userEntity.UserEntity;
 import com.example.jwtacces.models.debt.Debt;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

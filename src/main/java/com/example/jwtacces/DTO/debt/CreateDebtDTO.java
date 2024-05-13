@@ -1,4 +1,4 @@
-package com.example.jwtacces.models.debt;
+package com.example.jwtacces.DTO.debt;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

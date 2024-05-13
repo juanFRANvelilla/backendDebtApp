@@ -1,6 +1,6 @@
-package com.example.jwtacces.models.debt;
+package com.example.jwtacces.DTO.debt;
 
-import com.example.jwtacces.DTO.UserDTO;
+import com.example.jwtacces.DTO.user.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

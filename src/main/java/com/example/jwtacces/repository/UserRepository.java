@@ -1,6 +1,6 @@
 package com.example.jwtacces.repository;
 
-import com.example.jwtacces.models.UserEntity;
+import com.example.jwtacces.models.userEntity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

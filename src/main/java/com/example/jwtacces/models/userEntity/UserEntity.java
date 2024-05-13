@@ -1,14 +1,10 @@
-package com.example.jwtacces.models;
+package com.example.jwtacces.models.userEntity;
 
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.hibernate.annotations.NaturalId;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Getter

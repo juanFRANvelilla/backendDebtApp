@@ -1,15 +1,10 @@
 package com.example.jwtacces.runner;
 
-import com.example.jwtacces.models.ERole;
-import com.example.jwtacces.models.RoleEntity;
-import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 @Component
 public class Runner implements CommandLineRunner {

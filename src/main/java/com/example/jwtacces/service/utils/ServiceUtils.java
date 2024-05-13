@@ -1,7 +1,7 @@
 package com.example.jwtacces.service.utils;
 
-import com.example.jwtacces.DTO.UserDTO;
-import com.example.jwtacces.models.UserEntity;
+import com.example.jwtacces.DTO.user.UserDTO;
+import com.example.jwtacces.models.userEntity.UserEntity;
 import com.example.jwtacces.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

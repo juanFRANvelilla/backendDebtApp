@@ -1,11 +1,11 @@
 package com.example.jwtacces.service;
 
-import com.example.jwtacces.DTO.UserDTO;
-import com.example.jwtacces.models.UserEntity;
-import com.example.jwtacces.models.debt.BalanceDTO;
-import com.example.jwtacces.models.debt.CreateDebtDTO;
+import com.example.jwtacces.DTO.user.UserDTO;
+import com.example.jwtacces.models.userEntity.UserEntity;
+import com.example.jwtacces.DTO.debt.BalanceDTO;
+import com.example.jwtacces.DTO.debt.CreateDebtDTO;
 import com.example.jwtacces.models.debt.Debt;
-import com.example.jwtacces.models.debt.DebtDTO;
+import com.example.jwtacces.DTO.debt.DebtDTO;
 import com.example.jwtacces.repository.debt.DebtRepository;
 import com.example.jwtacces.service.utils.ServiceUtils;
 import jakarta.validation.Valid;

@@ -63,7 +63,7 @@ public class DebtsService {
             if(isUserCreditor){
                 counterpartyUser = debt.getDebtor();
             } else {
-                counterpartyUser = debt.getDebtor();
+                counterpartyUser = debt.getCreditor();
             }
 
             UserDTO counterpartyUserDTO = UserDTO.builder()

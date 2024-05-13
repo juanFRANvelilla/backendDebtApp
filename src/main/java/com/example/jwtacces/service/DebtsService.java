@@ -4,6 +4,7 @@ import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.models.debt.BalanceDTO;
 import com.example.jwtacces.models.debt.CreateDebtDTO;
 import com.example.jwtacces.models.debt.Debt;
+import com.example.jwtacces.models.debt.DebtDTO;
 import com.example.jwtacces.repository.debt.DebtRepository;
 import com.example.jwtacces.service.utils.ServiceUtils;
 import jakarta.validation.Valid;
@@ -51,6 +52,21 @@ public class DebtsService {
         return ResponseEntity.ok().body(balanceDTO);
     }
 
+    private static List<DebtDTO> convertDebtToDTO(List<Debt> debtList, UserEntity user){
+        List<DebtDTO> debtDTOlist = new ArrayList<>();
+        for(Debt debt: debtList){
+            DebtDTO debtDTO = DebtDTO.builder()
+                    .isCreditor(Objects.equals(debt.getCreditor().getUsername(), user.getUsername()))
+                    .amount(debt.getAmount())
+                    .date(debt.getDate())
+                    .description(debt.getDescription())
+                    .isPaid(debt.getIsPaid())
+                    .build();
+            debtDTOlist.add(debtDTO);
+        }
+        return debtDTOlist;
+    }
+
     public ResponseEntity<?> getDebtByCreditorAndDebtor(@Valid @RequestBody String debtorUsername){
         Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -74,15 +90,15 @@ public class DebtsService {
             List<Debt> debtsAsDebtor = debtRepository.getDebtByCreditorAndDebtor(debtor, creditor);
             debtsAsCreditor.addAll(debtsAsDebtor);
             debtsAsCreditor.sort(Comparator.comparing(Debt::getDate).reversed());
-            httpResponse.put("debts", debtsAsCreditor);
+
+            List<DebtDTO> debtDTOlist = convertDebtToDTO(debtsAsCreditor, creditor);
+            return ResponseEntity.ok().body(debtDTOlist);
         }
-        return ResponseEntity.ok().body(httpResponse);
     }
 
 
 
     public ResponseEntity<?> getDebtsByCreditorNotPaid(){
-        Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity creditor = serviceUtils.getUserFromAuthentification(authentication);
 
@@ -92,8 +108,8 @@ public class DebtsService {
         debtsAsCreditor.addAll(debtsAsDebtor);
         debtsAsCreditor.sort(Comparator.comparing(Debt::getDate).reversed());
 
-        httpResponse.put("debts", debtsAsCreditor);
-        return ResponseEntity.ok().body(httpResponse);
+        List<DebtDTO> debtDTOlist = convertDebtToDTO(debtsAsCreditor, creditor);
+        return ResponseEntity.ok().body(debtDTOlist);
     }
 
     public ResponseEntity<?> saveDebt(@Valid @RequestBody CreateDebtDTO newDebt){
@@ -121,7 +137,7 @@ public class DebtsService {
                 //si el monto de la deuda nueva es menor al que ya tenias pendiente, se le resta a esta ultima el valor de la nueva
                 //y la nueva aparecera como ya saldada
                 if(newDebt.getAmount() < debt.getAmount()){
-                    debt.setAmount(newDebt.getAmount() - debt.getAmount());
+                    debt.setAmount(debt.getAmount() - newDebt.getAmount());
                     newDebt.setIsPaid(true);
                     break;
                 }

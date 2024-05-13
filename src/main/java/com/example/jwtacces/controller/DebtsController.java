@@ -32,8 +32,7 @@ public class DebtsController {
     }
 
     /*
-    Obtiene las deudas que un usuario tiene con sus deudores en general, y estan pendientes de pagar
-    se necesita devolver un objeto con informacion sobre quien es
+    Obtiene las deudas actuales que un usuario tiene con sus deudores y con sus acreedores
      */
     @GetMapping(path = "/getDebtsByCreditorNotPaid")
     public ResponseEntity<?> getDebtsByCreditorNotPaid(){

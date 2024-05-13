@@ -1,5 +1,6 @@
 package com.example.jwtacces.service;
 
+import com.example.jwtacces.DTO.UserDTO;
 import com.example.jwtacces.models.UserEntity;
 import com.example.jwtacces.models.debt.BalanceDTO;
 import com.example.jwtacces.models.debt.CreateDebtDTO;
@@ -55,8 +56,26 @@ public class DebtsService {
     private static List<DebtDTO> convertDebtToDTO(List<Debt> debtList, UserEntity user){
         List<DebtDTO> debtDTOlist = new ArrayList<>();
         for(Debt debt: debtList){
+            //comprobar si el usuario que hace la llamada api es el acreedor de la deuda
+            boolean isUserCreditor = Objects.equals(debt.getCreditor().getUsername(), user.getUsername());
+            UserEntity counterpartyUser;
+            //determinamos si el usuario de la contrapartida es el acreedor o el deudor
+            if(isUserCreditor){
+                counterpartyUser = debt.getDebtor();
+            } else {
+                counterpartyUser = debt.getDebtor();
+            }
+
+            UserDTO counterpartyUserDTO = UserDTO.builder()
+                    .username(counterpartyUser.getUsername())
+                    .firstName(counterpartyUser.getFirstName())
+                    .lastName(counterpartyUser.getLastName())
+                    .email(counterpartyUser.getEmail())
+                    .build();
+
             DebtDTO debtDTO = DebtDTO.builder()
-                    .isCreditor(Objects.equals(debt.getCreditor().getUsername(), user.getUsername()))
+                    .isCreditor(isUserCreditor)
+                    .counterpartyUser(counterpartyUserDTO)
                     .amount(debt.getAmount())
                     .date(debt.getDate())
                     .description(debt.getDescription())
@@ -98,7 +117,7 @@ public class DebtsService {
 
 
 
-    public ResponseEntity<?> getDebtsByCreditorNotPaid(){
+    public ResponseEntity<?> getCurrentDebts(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity creditor = serviceUtils.getUserFromAuthentification(authentication);
 

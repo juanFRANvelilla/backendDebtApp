@@ -1,5 +1,6 @@
 package com.example.jwtacces.models.debt;
 
+import com.example.jwtacces.DTO.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,4 +18,5 @@ public class DebtDTO {
     private LocalDateTime date;
     private String description;
     private Boolean isPaid;
+    private UserDTO counterpartyUser;
 }

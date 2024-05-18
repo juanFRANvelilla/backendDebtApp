@@ -74,6 +74,7 @@ public class DebtsService {
                     .build();
 
             DebtDTO debtDTO = DebtDTO.builder()
+                    .id(debt.getId())
                     .isCreditor(isUserCreditor)
                     .counterpartyUser(counterpartyUserDTO)
                     .amount(debt.getAmount())
@@ -161,7 +162,7 @@ public class DebtsService {
                     break;
                 }
                 //si el monto es igual se saldaran las dos deudas
-                else if(newDebt.getAmount() == debt.getAmount()) {
+                else if(newDebt.getAmount() - debt.getAmount() == 0.0) {
                     debt.setIsPaid(true);
                     newDebt.setIsPaid(true);
                     break;

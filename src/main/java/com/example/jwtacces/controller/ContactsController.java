@@ -25,8 +25,6 @@ public class ContactsController {
     }
 
 
-
-
     /*
     realiza la logica que se encarga de mandar una soliticud a otro usuario para ser contactos, siempre y cuando
     este usuario exista, no seas tu mismo, ni haya una solicitud pendiente

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class DebtDTO {
+    private Long id;
     private boolean isCreditor;
     private Double amount;
     private LocalDateTime date;

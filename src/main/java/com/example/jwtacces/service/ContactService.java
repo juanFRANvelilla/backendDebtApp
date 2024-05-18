@@ -1,9 +1,11 @@
 package com.example.jwtacces.service;
 
+import com.example.jwtacces.DTO.requestContact.RequestContactDTO;
 import com.example.jwtacces.DTO.user.UserDTO;
 import com.example.jwtacces.models.userEntity.UserEntity;
 import com.example.jwtacces.models.contact.Contact;
 import com.example.jwtacces.models.contact.RequestContact;
+import com.example.jwtacces.repository.UserRepository;
 import com.example.jwtacces.repository.contact.ContactRepository;
 import com.example.jwtacces.repository.contact.ContactRequestRepository;
 import com.example.jwtacces.service.utils.ServiceUtils;
@@ -15,10 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ContactService {
@@ -27,6 +26,9 @@ public class ContactService {
 
     @Autowired
     private ContactRequestRepository contactRequestRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private ServiceUtils serviceUtils;
@@ -87,6 +89,7 @@ public class ContactService {
         else{
             if(!contactRequestRepository.requestAlreadyExist(Long.valueOf(contact.getId()), Long.valueOf(user.getId()))){
                 RequestContact requestContact = RequestContact.builder()
+                        .date(java.time.LocalDateTime.now())
                         .userId(Long.valueOf(contact.getId()))
                         .userRequestId(Long.valueOf(user.getId()))
                         .accept(false)
@@ -101,23 +104,40 @@ public class ContactService {
         }
     }
 
-    public ResponseEntity<?> showRequestContact(){
+    public List<RequestContactDTO> showRequestContact(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = serviceUtils.getUserFromAuthentification(authentication);
-        Set<Integer>contactRequestSendersId = new HashSet<Integer>();
-        Set<UserDTO>contacts = null;
+
+        List<RequestContactDTO> requestContactsDTO = new ArrayList<>();
+        Set<RequestContact> requestContacts = new HashSet<>();
         try {
-            //busca el id de los usuarios que tienes pendiente de aceptar
-            // (ya que en la tabla RequestContact solo aparece como info el id de los pendientes)
-            contactRequestSendersId = contactRequestRepository.findRequestContactIdsByUserId(Long.valueOf(user.getId()))
+            //buscar los request que tiene el usuario
+            requestContacts = contactRequestRepository.findRequestContactByUserId(Long.valueOf(user.getId()))
                     .orElseThrow(() -> new EmptyResultDataAccessException(1));
 
-            //busca info de los contactos haciendo uso de los anteriores id
-            contacts = serviceUtils.getUsersById(contactRequestSendersId);
+            //recorre los request y busca el usuario que lo envio a traves del id
+            for(RequestContact requestContact : requestContacts){
+                UserEntity userDoRequest = userRepository.findById(Math.toIntExact(requestContact.getUserRequestId()))
+                        .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+                UserDTO userDoRequestDTO = UserDTO.builder()
+                        .username(userDoRequest.getUsername())
+                        .firstName(userDoRequest.getFirstName())
+                        .lastName(userDoRequest.getLastName())
+                        .email(userDoRequest.getEmail())
+                        .build();
+
+                RequestContactDTO requestContactDTO = RequestContactDTO.builder()
+                        .userRequest(userDoRequestDTO)
+                        .date(requestContact.getDate())
+                        .build();
+
+                requestContactsDTO.add(requestContactDTO);
+
+            }
         } catch (EmptyResultDataAccessException e) {
         } catch (UsernameNotFoundException e) {
         }
-        return ResponseEntity.ok().body(contacts);
+        return requestContactsDTO;
     }
 
 

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,5 +21,6 @@ public class RequestContact {
     private Long id;
     private Long userId;
     private Long userRequestId;
+    private LocalDateTime date;
     private boolean accept;
 }

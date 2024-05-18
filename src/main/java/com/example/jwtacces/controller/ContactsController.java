@@ -37,10 +37,10 @@ public class ContactsController {
     /*
     devuelve la lista de usuarios que tienes pendientes de aceptar
      */
-    @GetMapping(path = "/showRequestContact")
-    public ResponseEntity<?> showRequestContact(){
-        return contactService.showRequestContact();
-    }
+//    @GetMapping(path = "/showRequestContact")
+//    public ResponseEntity<?> showRequestContact(){
+//        return contactService.showRequestContact();
+//    }
 
 
     /*

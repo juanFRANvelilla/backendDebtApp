@@ -1,6 +1,8 @@
 package com.example.jwtacces.service.utils;
 
+import com.example.jwtacces.DTO.debt.DebtDTO;
 import com.example.jwtacces.DTO.user.UserDTO;
+import com.example.jwtacces.models.debt.Debt;
 import com.example.jwtacces.models.userEntity.UserEntity;
 import com.example.jwtacces.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ServiceUtils {
@@ -48,5 +49,34 @@ public class ServiceUtils {
         UserEntity userEntity = userRepository.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
         return userEntity;
+    }
+
+    public static DebtDTO convertDebtToDTO(Debt debt, UserEntity user){
+        boolean isUserCreditor = Objects.equals(debt.getCreditor().getUsername(), user.getUsername());
+        UserEntity counterpartyUser;
+        //determinamos si el usuario de la contrapartida es el acreedor o el deudor
+        if(isUserCreditor){
+            counterpartyUser = debt.getDebtor();
+        } else {
+            counterpartyUser = debt.getCreditor();
+        }
+
+        UserDTO counterpartyUserDTO = UserDTO.builder()
+                .username(counterpartyUser.getUsername())
+                .firstName(counterpartyUser.getFirstName())
+                .lastName(counterpartyUser.getLastName())
+                .email(counterpartyUser.getEmail())
+                .build();
+
+        DebtDTO debtDTO = DebtDTO.builder()
+                .id(debt.getId())
+                .isCreditor(isUserCreditor)
+                .counterpartyUser(counterpartyUserDTO)
+                .amount(debt.getAmount())
+                .date(debt.getDate())
+                .description(debt.getDescription())
+                .isPaid(debt.getIsPaid())
+                .build();
+        return debtDTO;
     }
 }

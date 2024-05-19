@@ -11,4 +11,5 @@ import java.util.List;
 @Setter
 public class NotificationDTO {
     private List<RequestContactDTO> requestContactList;
+    private List<DebtNotificationDTO> debtNotificationList;
 }

@@ -53,39 +53,7 @@ public class DebtsService {
         return ResponseEntity.ok().body(balanceDTO);
     }
 
-    private static List<DebtDTO> convertDebtToDTO(List<Debt> debtList, UserEntity user){
-        List<DebtDTO> debtDTOlist = new ArrayList<>();
-        for(Debt debt: debtList){
-            //comprobar si el usuario que hace la llamada api es el acreedor de la deuda
-            boolean isUserCreditor = Objects.equals(debt.getCreditor().getUsername(), user.getUsername());
-            UserEntity counterpartyUser;
-            //determinamos si el usuario de la contrapartida es el acreedor o el deudor
-            if(isUserCreditor){
-                counterpartyUser = debt.getDebtor();
-            } else {
-                counterpartyUser = debt.getCreditor();
-            }
 
-            UserDTO counterpartyUserDTO = UserDTO.builder()
-                    .username(counterpartyUser.getUsername())
-                    .firstName(counterpartyUser.getFirstName())
-                    .lastName(counterpartyUser.getLastName())
-                    .email(counterpartyUser.getEmail())
-                    .build();
-
-            DebtDTO debtDTO = DebtDTO.builder()
-                    .id(debt.getId())
-                    .isCreditor(isUserCreditor)
-                    .counterpartyUser(counterpartyUserDTO)
-                    .amount(debt.getAmount())
-                    .date(debt.getDate())
-                    .description(debt.getDescription())
-                    .isPaid(debt.getIsPaid())
-                    .build();
-            debtDTOlist.add(debtDTO);
-        }
-        return debtDTOlist;
-    }
 
     public ResponseEntity<?> getDebtByCreditorAndDebtor(@Valid @RequestBody String debtorUsername){
         Map<String, Object> httpResponse = new HashMap<>();
@@ -111,7 +79,10 @@ public class DebtsService {
             debtsAsCreditor.addAll(debtsAsDebtor);
             debtsAsCreditor.sort(Comparator.comparing(Debt::getDate).reversed());
 
-            List<DebtDTO> debtDTOlist = convertDebtToDTO(debtsAsCreditor, creditor);
+            List<DebtDTO> debtDTOlist = new ArrayList<>();
+            for(Debt debtAsCreditor: debtsAsCreditor){
+                debtDTOlist.add(serviceUtils.convertDebtToDTO(debtAsCreditor, creditor));
+            }
             return ResponseEntity.ok().body(debtDTOlist);
         }
     }
@@ -128,7 +99,10 @@ public class DebtsService {
         debtsAsCreditor.addAll(debtsAsDebtor);
         debtsAsCreditor.sort(Comparator.comparing(Debt::getDate).reversed());
 
-        List<DebtDTO> debtDTOlist = convertDebtToDTO(debtsAsCreditor, creditor);
+        List<DebtDTO> debtDTOlist = new ArrayList<>();
+        for(Debt debtAsCreditor: debtsAsCreditor){
+            debtDTOlist.add(serviceUtils.convertDebtToDTO(debtAsCreditor, creditor));
+        }
         return ResponseEntity.ok().body(debtDTOlist);
     }
 

@@ -6,6 +6,7 @@ import com.example.jwtacces.DTO.notification.NotificationDTO;
 import com.example.jwtacces.DTO.requestContact.RequestContactDTO;
 import com.example.jwtacces.service.ContactService;
 import com.example.jwtacces.service.NotificationService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +52,13 @@ public class NotificationController {
         return notificationService.createDebtNotification(debtNotification);
     }
 
+    /*
+    elimina una notificacion de deuda por id de deuda y fecha de creacion
+     */
+    @Transactional
+    @PostMapping(path = "/deleteDebtNotification")
+    public ResponseEntity<?> deleteDebtNotification(@Valid @RequestBody DebtNotificationDTO debtNotification){
+        return notificationService.deleteDebtNotification(debtNotification);
+    }
 
 }

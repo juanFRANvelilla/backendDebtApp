@@ -7,6 +7,7 @@ import com.example.jwtacces.DTO.debt.CreateDebtDTO;
 import com.example.jwtacces.models.debt.Debt;
 import com.example.jwtacces.DTO.debt.DebtDTO;
 import com.example.jwtacces.repository.debt.DebtRepository;
+import com.example.jwtacces.repository.notification.NotificationRepository;
 import com.example.jwtacces.service.utils.ServiceUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ import java.util.*;
 public class DebtsService {
     @Autowired
     private DebtRepository debtRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @Autowired
     private ServiceUtils serviceUtils;
@@ -176,6 +180,8 @@ public class DebtsService {
         if(creditorOfDebt.isPresent()){
             if(creditorOfDebt.get() == creditor){
                 debtRepository.setDebtPaid(debtId);
+                //borrar las notificaciones asociadas a esa deuda
+                notificationRepository.deleteByDebtId(debtId);
                 httpResponse.put("response", "Deuda pagada");
                 return ResponseEntity.ok().body(httpResponse);
             } else {

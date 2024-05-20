@@ -4,7 +4,6 @@ import com.example.jwtacces.DTO.notification.DebtNotificationDTO;
 import com.example.jwtacces.models.debt.Debt;
 import com.example.jwtacces.models.notification.DebtNotification;
 import com.example.jwtacces.models.userEntity.UserEntity;
-import com.example.jwtacces.repository.UserRepository;
 import com.example.jwtacces.repository.debt.DebtRepository;
 import com.example.jwtacces.repository.notification.NotificationRepository;
 import com.example.jwtacces.service.utils.ServiceUtils;
@@ -68,5 +67,11 @@ public class NotificationService {
             debtNotificationDTOS.add(debtNotificationDTO);
         }
         return debtNotificationDTOS;
+    }
+
+    public ResponseEntity<?> deleteDebtNotification(DebtNotificationDTO debtNotificationDTO) {
+        //borrar notificacion por id de deuda y fecha de creacion
+        notificationRepository.deleteByDebtIdAndDate(debtNotificationDTO.getDebt().getId(), LocalDateTime.parse(debtNotificationDTO.getDate()));
+        return ResponseEntity.ok().body("Notificacion de deuda eliminada correctamente");
     }
 }

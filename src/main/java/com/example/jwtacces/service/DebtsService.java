@@ -1,6 +1,5 @@
 package com.example.jwtacces.service;
 
-import com.example.jwtacces.DTO.user.UserDTO;
 import com.example.jwtacces.models.userEntity.UserEntity;
 import com.example.jwtacces.DTO.debt.BalanceDTO;
 import com.example.jwtacces.DTO.debt.CreateDebtDTO;

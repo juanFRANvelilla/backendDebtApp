@@ -1,6 +1,5 @@
 package com.example.jwtacces.controller;
 
-import com.example.jwtacces.DTO.debt.CreateDebtDTO;
 import com.example.jwtacces.DTO.notification.DebtNotificationDTO;
 import com.example.jwtacces.DTO.notification.NotificationDTO;
 import com.example.jwtacces.DTO.requestContact.RequestContactDTO;

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping(path = "/api2")
+@RequestMapping(path = "/contact")
 public class ContactsController {
     @Autowired
     private ContactService contactService;
@@ -34,14 +34,6 @@ public class ContactsController {
         return contactService.doRequestContact(contactUsername);
     }
 
-    /*
-    devuelve la lista de usuarios que tienes pendientes de aceptar
-     */
-//    @GetMapping(path = "/showRequestContact")
-//    public ResponseEntity<?> showRequestContact(){
-//        return contactService.showRequestContact();
-//    }
-
 
     /*
     funcion que se encarga de aceptar la solicitud de contacto y marcar como aceptadas en true las filas involucradas
@@ -53,4 +45,5 @@ public class ContactsController {
     public ResponseEntity<?> acceptRequestContact(@RequestParam String contactUsername){
         return contactService.acceptRequestContact(contactUsername);
     }
+
 }

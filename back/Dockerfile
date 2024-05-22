@@ -18,7 +18,7 @@ RUN ./mvnw package
 
 USER nonroot
 
-RUN /target/
+RUN ls /target/
 
 COPY /target/jwtAcces-0.0.1-SNAPSHOT.jar /
 

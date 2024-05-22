@@ -8,6 +8,9 @@ ENV JAVA_HOME=/usr/lib/jvm/java-20-openjdk
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 COPY src ./src
+
+USER root
+
 RUN ./mvnw package
 
 USER nonroot

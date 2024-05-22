@@ -19,12 +19,12 @@ RUN ./mvnw package
 
 RUN chmod 777 -R target/
 
-USER nonroot
-
 RUN ls target/
 
 COPY target/jwtAcces-0.0.1-SNAPSHOT.jar /
 
 WORKDIR /
 
-ENTRYPOINT ["java", "-jar", "/jwtAcces-0.0.1-SNAPSHOT.jar"]
+USER nonroot
+
+ENTRYPOINT ["java", "-jar", "jwtAcces-0.0.1-SNAPSHOT.jar"]

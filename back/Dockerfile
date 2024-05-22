@@ -19,12 +19,6 @@ RUN ./mvnw package
 # Confirm the target directory contains the JAR file
 RUN ls target/
 
-RUN pwd
-
-COPY /app/target/jwtAcces-0.0.1-SNAPSHOT.jar /app
-
-WORKDIR /app
-
-USER nonroot
+#USER nonroot
 
 ENTRYPOINT ["java", "-jar", "jwtAcces-0.0.1-SNAPSHOT.jar"]

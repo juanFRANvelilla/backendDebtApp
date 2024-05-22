@@ -9,6 +9,9 @@ COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 COPY src ./src
 
+# Ensure mvnw has execute permissions
+RUN chmod +x mvnw
+
 USER root
 
 RUN ./mvnw package

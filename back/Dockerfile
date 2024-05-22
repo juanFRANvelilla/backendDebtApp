@@ -19,6 +19,8 @@ RUN ./mvnw package
 # Confirm the target directory contains the JAR file
 RUN ls target/
 
+RUN pwd
+
 COPY target/jwtAcces-0.0.1-SNAPSHOT.jar /app
 
 WORKDIR /app

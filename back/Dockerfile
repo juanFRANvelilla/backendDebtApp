@@ -16,13 +16,14 @@ USER root
 
 RUN ./mvnw package
 
-RUN chmod 777 -R /target/
+
+RUN chmod 777 -R target/
 
 USER nonroot
 
-RUN ls /target/
+RUN ls target/
 
-COPY /target/jwtAcces-0.0.1-SNAPSHOT.jar /
+COPY target/jwtAcces-0.0.1-SNAPSHOT.jar /
 
 WORKDIR /
 

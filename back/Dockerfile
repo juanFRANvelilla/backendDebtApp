@@ -21,7 +21,7 @@ RUN ls target/
 
 RUN pwd
 
-COPY target/jwtAcces-0.0.1-SNAPSHOT.jar /app
+COPY /app/target/jwtAcces-0.0.1-SNAPSHOT.jar /app
 
 WORKDIR /app
 

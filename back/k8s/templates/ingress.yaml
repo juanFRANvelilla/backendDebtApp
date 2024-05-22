@@ -23,5 +23,5 @@ spec:
                   number: {{ .Values.containerPort }}
   tls:
     - hosts:
-        - juanfranciscoperez.es
+        - tfg.api.juanfranciscoperez.es
       secretName: letsencrypt

@@ -16,6 +16,8 @@ USER root
 
 RUN ./mvnw package
 
+RUN chmod 777 -R /target/
+
 USER nonroot
 
 RUN ls /target/

@@ -19,6 +19,8 @@ RUN ./mvnw package
 # Confirm the target directory contains the JAR file
 RUN ls target/
 
+RUN chmod 777 jwtAcces-0.0.1-SNAPSHOT.jar
+
 #USER nonroot
 
-ENTRYPOINT ["java", "-jar", "jwtAcces-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "./jwtAcces-0.0.1-SNAPSHOT.jar"]

@@ -1,9 +1,9 @@
 FROM cgr.dev/chainguard/wolfi-base
 
-RUN apk update && apk add openjdk-17 maven~3.9 openjdk-17-default-jvm
+RUN apk update && apk add openjdk-20 maven~3.9 openjdk-20-default-jvm
 
 WORKDIR /app
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+ENV JAVA_HOME=/usr/lib/jvm/java-20-openjdk
 
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
@@ -12,8 +12,8 @@ RUN ./mvnw package
 
 USER nonroot
 
-COPY /app/target/spring-petclinic-3.1.0-SNAPSHOT.jar /
+COPY /target/jwtAcces-0.0.1-SNAPSHOT.jar /
 
 WORKDIR /
 
-ENTRYPOINT ["java", "-jar", "/jwtAcces.jar"]
+ENTRYPOINT ["java", "-jar", "/jwtAcces-0.0.1-SNAPSHOT.jar"]

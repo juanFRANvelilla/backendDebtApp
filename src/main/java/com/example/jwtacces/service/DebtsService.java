@@ -58,33 +58,33 @@ public class DebtsService {
 
 
 
-    public ResponseEntity<?> getDebtByCreditorAndDebtor(@Valid @RequestBody String debtorUsername){
+    public ResponseEntity<?> getHistoricalDebts(@Valid @RequestBody String counterpartyUsername){
         Map<String, Object> httpResponse = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserEntity creditor = serviceUtils.getUserFromAuthentification(authentication);
-        UserEntity debtor;
+        UserEntity user = serviceUtils.getUserFromAuthentification(authentication);
+        UserEntity counterpartyUser;
 
         try{
-            debtor = serviceUtils.getUserFromUsername(debtorUsername);
+            counterpartyUser = serviceUtils.getUserFromUsername(counterpartyUsername);
         } catch (UsernameNotFoundException e) {
-            httpResponse.put("error","No puedes mandar solicitud a ese numero");
+            httpResponse.put("error","No puedes ver las deudas con ese deudor");
             return ResponseEntity.badRequest().body(httpResponse);
         }
 
-        if(debtor == null || creditor.getId() == debtor.getId()){
-            httpResponse.put("error","No puedes mandar solicitud a ese numero");
+        if(counterpartyUser == null || user.getId() == counterpartyUser.getId()){
+            httpResponse.put("error","No puedes ver las deudas con ese deudor");
             return ResponseEntity.badRequest().body(httpResponse);
         }
 
         else {
-            List<Debt> debtsAsCreditor = debtRepository.getDebtByCreditorAndDebtor(creditor, debtor);
-            List<Debt> debtsAsDebtor = debtRepository.getDebtByCreditorAndDebtor(debtor, creditor);
+            List<Debt> debtsAsCreditor = debtRepository.getDebtByCreditorAndDebtor(user, counterpartyUser);
+            List<Debt> debtsAsDebtor = debtRepository.getDebtByCreditorAndDebtor(counterpartyUser, user);
             debtsAsCreditor.addAll(debtsAsDebtor);
             debtsAsCreditor.sort(Comparator.comparing(Debt::getDate).reversed());
 
             List<DebtDTO> debtDTOlist = new ArrayList<>();
             for(Debt debtAsCreditor: debtsAsCreditor){
-                debtDTOlist.add(serviceUtils.convertDebtToDTO(debtAsCreditor, creditor));
+                debtDTOlist.add(serviceUtils.convertDebtToDTO(debtAsCreditor, user));
             }
             return ResponseEntity.ok().body(debtDTOlist);
         }

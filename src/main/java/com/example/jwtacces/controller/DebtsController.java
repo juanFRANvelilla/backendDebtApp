@@ -26,9 +26,9 @@ public class DebtsController {
     /*
      Obtiene las deudas entre un usuario y su deudor incluyendo las que ya han sido pagadas, para ver en historial
      */
-    @GetMapping(path = "/getDebtsByCreditorAndDebtor")
-    public ResponseEntity<?> getDebtByCreditorAndDebtor(@RequestParam String debtorUsername){
-        return debtsService.getDebtByCreditorAndDebtor(debtorUsername);
+    @GetMapping(path = "/getHistoricalDebts")
+    public ResponseEntity<?> getHistoricalDebts(@RequestParam String counterpartyUsername){
+        return debtsService.getHistoricalDebts(counterpartyUsername);
     }
 
     /*

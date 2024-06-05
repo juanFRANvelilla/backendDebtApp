@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/access")
+@RequestMapping(path = "/api")
 public class AccessController {
 
     @Autowired
@@ -42,9 +42,7 @@ public class AccessController {
         return accessService.validatePhone(createUserDTO);
     }
 
-
-
-
+    
     @DeleteMapping(path = "/deleteUser")
     public void deleteUser(@RequestParam String id){
         accessService.deleteUser(id);

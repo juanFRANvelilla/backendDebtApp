@@ -44,7 +44,7 @@ public class ServiceUtils {
         return user;
     }
 
-    /* retorna el user que se corresponde a la peticion de amistad */
+    /* retorna el user by username */
     public UserEntity getUserFromUsername(String username){
         UserEntity userEntity = userRepository.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));

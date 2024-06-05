@@ -31,14 +31,7 @@ public class AccessService {
     @Autowired
     private PhoneValidationRepository phoneValidationRepository;
 
-    /*
-    verifica que el telefono con el que se quiere registrar un nuevo usuario no este ya siendo
-    utilizado en la app, se manda un codigo aleatorio creado en el front que se mandara por sms
-    que luego se tendra que validar
-    unicamente creara una fila en la bd con el nuevo numero a registrar y el codigo que tiene
-    que ser validado, en la siguiente llamada es cuando si el codigo corresponde se agregan todos
-    los datos del user a la aplicacion
-     */
+
     public ResponseEntity<?> confirmPhone(@Valid @RequestBody PhoneValidation phoneValidation) {
         Map<String, Object> httpResponse = new HashMap<>();
         Optional<PhoneValidation> phoneValidationOptional = phoneValidationRepository.findPhoneValidationByPhone(phoneValidation.getUsername());
@@ -61,12 +54,6 @@ public class AccessService {
     }
 
 
-    /*
-    recibe un objeto con la info necesaria para crear un nuevo usuario, si el codigo de
-    verificacion de este objeto coincide con el codigo mas reciente guardado en la bd y
-    ademas no se han empleado mas de 3 intentos en realizar la autentificacion se creara un '
-    nuevo user
-     */
     public ResponseEntity<?>validatePhone(@Valid @RequestBody CreateUserDTO createUserDTO){
         Map<String, Object> httpResponse = new HashMap<>();
         PhoneValidation phoneValidation = phoneValidationRepository.findPhoneValidationByPhone(createUserDTO.getUsername())
@@ -98,10 +85,6 @@ public class AccessService {
     }
 
 
-    /*
-    funcion que se encarga de guardar un usuario en la bd despues de que este haya demostrado
-    tras la verificacion de telefono que es el propietario de este
-     */
     private UserEntity createUser(CreateUserDTO createUserDTO){
         Set<RoleEntity> roles = new HashSet<RoleEntity>();
         RoleEntity userRole = RoleEntity.builder()

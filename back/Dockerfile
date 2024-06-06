@@ -20,6 +20,6 @@ RUN ./mvnw package
 RUN ls target/
 
 
-#USER nonroot
+USER nonroot
 
 ENTRYPOINT ["java", "-jar", "/app/target/jwtAcces-0.0.1-SNAPSHOT.jar"]

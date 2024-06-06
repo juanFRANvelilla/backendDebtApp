@@ -26,4 +26,5 @@ USER nonroot
 
 COPY --from=build /app/target/jwtAcces-0.0.1-SNAPSHOT.jar /
 
-ENTRYPOINT ["java", "-jar", "jwtAcces-0.0.1-SNAPSHOT.jar"]
+#ENTRYPOINT ["java", "-jar", "jwtAcces-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["sleep", "infinity"]

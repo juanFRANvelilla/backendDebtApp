@@ -22,4 +22,4 @@ RUN ls target/
 
 #USER nonroot
 
-ENTRYPOINT ["java", "-jar", "/app/target/jwtAcces-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["/usr/bin/java", "-jar", "/app/target/jwtAcces-0.0.1-SNAPSHOT.jar"]

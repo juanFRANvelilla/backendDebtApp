@@ -22,7 +22,7 @@ RUN apk update && apk add openjdk-20-default-jvm
 # Some Java apps may require extra locale files
 # RUN apk add glibc-locale-en
 
-USER nonroot
+#USER nonroot
 
 COPY --from=build /app/target/jwtAcces-0.0.1-SNAPSHOT.jar /
 

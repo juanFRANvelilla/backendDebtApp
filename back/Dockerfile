@@ -16,15 +16,11 @@ USER root
 
 RUN ./mvnw package
 
-FROM cgr.dev/chainguard/wolfi-base
-RUN apk update && apk add openjdk-20-default-jvm
-
 # Some Java apps may require extra locale files
 # RUN apk add glibc-locale-en
 
 USER nonroot
 
-COPY --from=build /app/target/jwtAcces-0.0.1-SNAPSHOT.jar /
+COPY /app/target/jwtAcces-0.0.1-SNAPSHOT.jar /
 
-#ENTRYPOINT ["java", "-jar", "jwtAcces-0.0.1-SNAPSHOT.jar"]
-ENTRYPOINT ["sleep", "infinity"]
+ENTRYPOINT ["java", "-jar", "jwtAcces-0.0.1-SNAPSHOT.jar"]

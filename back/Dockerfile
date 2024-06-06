@@ -19,11 +19,7 @@ RUN ./mvnw package
 # Some Java apps may require extra locale files
 # RUN apk add glibc-locale-en
 
-RUN chmod +x /app/target/jwtAcces-0.0.1-SNAPSHOT.jar
-COPY /app/target/jwtAcces-0.0.1-SNAPSHOT.jar /
-
-
 USER nonroot
 
 
-ENTRYPOINT ["java", "-jar", "jwtAcces-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/target/jwtAcces-0.0.1-SNAPSHOT.jar"]

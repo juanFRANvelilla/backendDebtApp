@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard/wolfi-base
+FROM cgr.dev/chainguard/wolfi-base as build
 
 RUN apk update && apk add openjdk-20 maven~3.9 openjdk-20-default-jvm
 
@@ -16,10 +16,10 @@ USER root
 
 RUN ./mvnw package
 
-# Confirm the target directory contains the JAR file
-RUN ls target/
+# Some Java apps may require extra locale files
+# RUN apk add glibc-locale-en
 
+USER nonroot
 
-#USER nonroot
 
 ENTRYPOINT ["java", "-jar", "/app/target/jwtAcces-0.0.1-SNAPSHOT.jar"]

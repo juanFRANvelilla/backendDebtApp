@@ -73,7 +73,7 @@ public class ServiceUtils {
                 .isCreditor(isUserCreditor)
                 .counterpartyUser(counterpartyUserDTO)
                 .amount(debt.getAmount())
-                .date(debt.getDate())
+                .date(debt.getDate().toString())
                 .description(debt.getDescription())
                 .isPaid(debt.getIsPaid())
                 .build();

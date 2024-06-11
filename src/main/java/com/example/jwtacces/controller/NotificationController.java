@@ -28,19 +28,19 @@ public class NotificationController {
     devuelve las notificaciones
      */
     @GetMapping(path = "/getNotifications")
-    public ResponseEntity<?> showRequestContact(){
+    public ResponseEntity<?> getNotifications(){
         //obtener las peticiones de contacto lista que contiene (userDTO que hace la peticion, fecha de la peticion)
         List<RequestContactDTO> requestContact = contactService.showRequestContact();
         //obtener las notificaciones de deuda
         List<DebtNotificationDTO> debtNotifications = notificationService.getDebtNotifications();
 
         //crea un objeto de notificaciones y se las asigna
-        NotificationDTO requestContactsDTO = NotificationDTO.builder()
+        NotificationDTO notificationDTO = NotificationDTO.builder()
                 .requestContactList(requestContact)
                 .debtNotificationList(debtNotifications)
                 .build();
 
-        return ResponseEntity.ok().body(requestContactsDTO);
+        return ResponseEntity.ok().body(notificationDTO);
     }
 
     /*

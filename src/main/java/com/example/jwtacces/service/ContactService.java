@@ -128,7 +128,7 @@ public class ContactService {
 
                 RequestContactDTO requestContactDTO = RequestContactDTO.builder()
                         .userRequest(userDoRequestDTO)
-                        .date(requestContact.getDate())
+                        .date(requestContact.getDate().toString())
                         .build();
 
                 requestContactsDTO.add(requestContactDTO);

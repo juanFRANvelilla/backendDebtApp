@@ -16,7 +16,7 @@ public class DebtDTO {
     private Long id;
     private boolean isCreditor;
     private Double amount;
-    private LocalDateTime date;
+    private String date;
     private String description;
     private Boolean isPaid;
     private UserDTO counterpartyUser;

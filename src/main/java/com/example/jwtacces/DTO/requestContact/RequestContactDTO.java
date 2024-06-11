@@ -10,5 +10,5 @@ import java.time.LocalDateTime;
 @Getter
 public class RequestContactDTO {
     private UserDTO userRequest;
-    private LocalDateTime date;
+    private String date;
 }

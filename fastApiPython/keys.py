@@ -1,0 +1,6 @@
+account_id = 'AC0ed1fafc2aa22d0d669732e5ddd5518e'
+auth_token = '370f5c5de9862c214f300c65e3fd0478'
+account_sid = 'AC0ed1fafc2aa22d0d669732e5ddd5518e'
+verify_id = 'VA70cbcc90c31b264f3f4e91a829b8c427'
+twilio_number = '+19083443614'
+twilio_code_recuperator = '88GJRGA7B86MWPRV4JVVTVWQ'

@@ -7,7 +7,8 @@ import static org.mockito.Mockito.*;
 import com.example.zgzemergencymapback.model.*;
 import com.example.zgzemergencymapback.model.incident.Incident;
 import com.example.zgzemergencymapback.model.incident.IncidentStatusEnum;
-import com.example.zgzemergencymapback.utils.JsonConverterService;
+import com.example.zgzemergencymapback.service.impl.ResourceServiceImpl;
+import com.example.zgzemergencymapback.utils.impl.JsonConverterServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,9 +31,9 @@ public class JsonConverterServiceTest {
     @Mock
     private GoogleMapsService googleMapsService;
     @Mock
-    private ResourceService resourceService;
+    private ResourceServiceImpl resourceService;
     @InjectMocks
-    private JsonConverterService jsonConverterService;
+    private JsonConverterServiceImpl jsonConverterService;
 
 
     /*
@@ -40,7 +41,6 @@ public class JsonConverterServiceTest {
      */
     @Test
     void testGetNewCloseIncidentInfoFromJson() throws IOException {
-        Set<CoordinatesAndAddress> coordinatesAndAddressSet = new HashSet<>();
         // Dado este objeto json
         String json = "{\n" +
                 "  \"totalCount\": 1,\n" +
@@ -82,7 +82,7 @@ public class JsonConverterServiceTest {
 
 
         // Llamamos al método a testear
-        List<Incident> result = jsonConverterService.getIncidentInfoFromJson(json, status, coordinatesAndAddressSet);
+        List<Incident> result = jsonConverterService.getIncidentInfoFromJson(json, status);
 
         assertEquals(0, result.size());
 
@@ -104,7 +104,6 @@ public class JsonConverterServiceTest {
      */
     @Test
     void testUpdateOpenIncidentFromJson() throws IOException {
-        Set<CoordinatesAndAddress> coordinatesAndAddressSet = new HashSet<>();
         // Dado este objeto json
         String json = "{\n" +
                 "  \"totalCount\": 1,\n" +
@@ -153,7 +152,7 @@ public class JsonConverterServiceTest {
         );
 
         // Llamamos al método a testear
-        List<Incident> result = jsonConverterService.getIncidentInfoFromJson(json, status, coordinatesAndAddressSet);
+        List<Incident> result = jsonConverterService.getIncidentInfoFromJson(json, status);
 
         assertEquals(1, result.size());
 
@@ -174,7 +173,6 @@ public class JsonConverterServiceTest {
      */
     @Test
     void testNotUpdateOpenIncidentFromJson() throws IOException {
-        Set<CoordinatesAndAddress> coordinatesAndAddressSet = new HashSet<>();
         // Dado este objeto json
         String json = "{\n" +
                 "  \"totalCount\": 1,\n" +
@@ -223,7 +221,7 @@ public class JsonConverterServiceTest {
         );
 
         // Llamamos al método a testear
-        List<Incident> result = jsonConverterService.getIncidentInfoFromJson(json, status, coordinatesAndAddressSet);
+        List<Incident> result = jsonConverterService.getIncidentInfoFromJson(json, status);
 
         assertEquals(1, result.size());
 

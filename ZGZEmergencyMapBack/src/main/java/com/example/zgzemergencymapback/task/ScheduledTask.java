@@ -1,6 +1,6 @@
 package com.example.zgzemergencymapback.task;
 
-import com.example.zgzemergencymapback.service.IncidentsZgzDataService;
+import com.example.zgzemergencymapback.service.impl.IncidentsZgzDataServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class ScheduledTask {
 
     @Autowired
-    private IncidentsZgzDataService incidentsZgzDataService;
+    private IncidentsZgzDataServiceImpl incidentsZgzDataService;
 
     // Este método se ejecutará cada 15 minutos (900,000 ms)
     @Scheduled(fixedRate = 900000)

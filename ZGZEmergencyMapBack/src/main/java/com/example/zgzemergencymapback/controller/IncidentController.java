@@ -4,8 +4,8 @@ package com.example.zgzemergencymapback.controller;
 import com.example.zgzemergencymapback.response.IncidentResponseDTO;
 import com.example.zgzemergencymapback.service.IncidentResourceService;
 import com.example.zgzemergencymapback.service.IncidentService;
-import com.example.zgzemergencymapback.service.IncidentsZgzDataService;
-import com.example.zgzemergencymapback.service.ResourceService;
+import com.example.zgzemergencymapback.service.impl.IncidentsZgzDataServiceImpl;
+import com.example.zgzemergencymapback.service.impl.ResourceServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class IncidentController {
 
     @Autowired
-    private IncidentsZgzDataService incidentsZgzDataService;
+    private IncidentsZgzDataServiceImpl incidentsZgzDataService;
 
     @Autowired
     private IncidentService incidentService;
 
     @Autowired
-    private ResourceService resourceService;
+    private ResourceServiceImpl resourceService;
 
     @Autowired
     private IncidentResourceService incidentResourceService;

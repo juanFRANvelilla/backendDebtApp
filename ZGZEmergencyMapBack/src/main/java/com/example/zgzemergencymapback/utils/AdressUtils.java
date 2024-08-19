@@ -8,8 +8,8 @@ import java.util.List;
 
 public class AdressUtils {
     private static final Path2D ZARAGOZA_POLYGON = new Path2D.Double();
-    private static final double LATITUDE_OFFSET = 0.0001; // Ajusta este valor según tus necesidades
-    private static final double LONGITUDE_OFFSET = 0.0001;
+    private static final double LATITUDE_OFFSET = 0.0000;
+    private static final double LONGITUDE_OFFSET = 0.0003;
 
     static {
         ZARAGOZA_POLYGON.moveTo(41.75731894412275, -0.8926774895802142);
